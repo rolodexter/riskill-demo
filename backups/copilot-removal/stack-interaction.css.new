@@ -1,0 +1,69 @@
+/* Stack Management Styles */
+
+/* Stack badge styles */
+.stack-badge {
+    position: absolute;
+    top: clamp(-10px, -1.5vw, -8px);
+    right: clamp(-10px, -1.5vw, -8px);
+    background: linear-gradient(135deg, #0078d4, #106ebe);
+    color: white;
+    border-radius: clamp(10px, 1.5vw, 12px);
+    padding: clamp(3px, 0.8vw, 6px) clamp(6px, 1vw, 10px);
+    font-size: clamp(10px, 1vw, 12px);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+    z-index: 10;
+    transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: clamp(18px, 2vw, 24px);
+    min-height: clamp(18px, 2vw, 24px);
+}
+
+.card-stack-container:hover .stack-badge {
+    transform: scale(1.1);
+}
+
+/* Visual stack depth indicators */
+.card-stack-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.card-stack-container::before,
+.card-stack-container::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    z-index: -1;
+}
+
+.card-stack-container::before {
+    top: -4px;
+    left: 4px;
+    right: -4px;
+    bottom: 4px;
+}
+
+.card-stack-container::after {
+    top: -8px;
+    left: 8px;
+    right: -8px;
+    bottom: 8px;
+}
+
+/* First card in stack styles */
+.stacked-card.first-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 
+        0 12px 24px rgba(0, 0, 0, 0.1),
+        0 24px 48px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+/* Fan-out active state */
+.card-stack-container.fan-out-active {
+    z-index: 100;
+}

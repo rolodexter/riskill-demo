@@ -1,0 +1,643 @@
+/* Entity Linking and Content-Aware Narrative System Styles */
+
+/* Entity Link Styling */
+.entity-link {
+    color: #0078d4;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.entity-link:hover {
+    color: #005a9e;
+    background-color: rgba(0, 120, 212, 0.02);
+    border-radius: 2px;
+}
+
+/* Remove underline effect */
+.entity-link::after {
+    display: none;
+}
+
+/* Entity type-specific styling */
+.entity-link.organization {
+    color: #0078d4;
+}
+
+.entity-link.contact {
+    color: #107c10;
+}
+
+.entity-link.email {
+    color: #5c2d91;
+}
+
+.entity-link.phone {
+    color: #d83b01;
+}
+
+.entity-link.url {
+    color: #008272;
+}
+
+.entity-link.feature {
+    color: #8661c5;
+}
+
+.entity-link.campaign {
+    color: #ca5010;
+}
+
+/* Card transformation animations */
+.insight-card.transforming {
+    opacity: 0.7;
+    transform: scale(0.98);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.insight-card.transformed {
+    animation: cardTransformed 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes cardTransformed {
+    0% {
+        opacity: 0.7;
+        transform: scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Entity Card Header */
+.entity-card-header,
+.action-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.entity-card-header h4,
+.action-card-header h4 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.back-to-previous {
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.back-to-previous:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: #333;
+}
+
+/* Entity Summary */
+.entity-summary {
+    margin-bottom: 20px;
+}
+
+.entity-metrics {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.metric {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.02);
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.metric-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.metric-value.positive {
+    color: #0a8043;
+}
+
+.metric-value.negative {
+    color: #d93025;
+}
+
+.entity-narrative {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+/* Entity Chart */
+.entity-chart {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.chart-header {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: flex-end;
+    height: 120px;
+    gap: 8px;
+}
+
+.chart-bar {
+    flex: 1;
+    background: linear-gradient(180deg, #0078d4, #2b88d8);
+    border-radius: 4px 4px 0 0;
+    min-width: 20px;
+}
+
+/* Entity Contacts */
+.entity-contacts {
+    margin-bottom: 20px;
+}
+
+.entity-contacts h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contact-item {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.contact-name {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.contact-role {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.contact-email {
+    font-size: 12px;
+    color: #5c2d91;
+}
+
+/* Entity Actions */
+.entity-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.entity-action-btn {
+    background: rgba(0, 120, 212, 0.08);
+    border: none;
+    border-radius: 16px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: rgb(0, 120, 212);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.entity-action-btn:hover {
+    background: rgba(0, 120, 212, 0.12);
+}
+
+/* Contact Info */
+.contact-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.contact-avatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #0078d4, #2b88d8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.contact-company {
+    font-size: 14px;
+    color: #333;
+}
+
+.contact-email {
+    font-size: 12px;
+    color: #5c2d91;
+}
+
+/* Communication Timeline */
+.communication-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.communication-item {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding: 12px;
+    border-left: 4px solid #ccc;
+}
+
+.communication-item.positive {
+    border-left-color: #0a8043;
+}
+
+.communication-item.neutral {
+    border-left-color: #666;
+}
+
+.communication-item.negative {
+    border-left-color: #d93025;
+}
+
+.communication-type {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.communication-subject {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.communication-time {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Email List */
+.email-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.email-item {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.email-item.unread {
+    background: rgba(0, 120, 212, 0.05);
+}
+
+.email-subject {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.email-preview {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.email-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+}
+
+.email-attachment {
+    font-size: 14px;
+}
+
+/* Action Analysis */
+.action-analysis {
+    margin-bottom: 20px;
+}
+
+.analysis-summary {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.factor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.factor-item {
+    display: flex;
+    gap: 16px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.factor-icon {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.factor-content {
+    flex: 1;
+}
+
+.factor-content h5 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.factor-content p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+.factor-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+/* Action Recommendations */
+.action-recommendations {
+    background: rgba(0, 120, 212, 0.05);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.action-recommendations h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.recommendation-list {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.recommendation-list li {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.recommendation-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* Comparison View */
+.comparison-view {
+    margin-bottom: 20px;
+}
+
+.comparison-metrics {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.comparison-period {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+}
+
+.comparison-period h5 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.comparison-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.comparison-change {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.comparison-change.positive {
+    color: #0a8043;
+}
+
+.comparison-change.negative {
+    color: #d93025;
+}
+
+.comparison-chart {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.chart-container {
+    margin-top: 16px;
+}
+
+.chart-columns {
+    display: flex;
+    justify-content: space-between;
+    height: 200px;
+    margin-bottom: 16px;
+}
+
+.chart-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 0 8px;
+}
+
+.chart-column .chart-bar {
+    width: 100%;
+    position: absolute;
+    bottom: 24px;
+}
+
+.chart-bar.current {
+    background: linear-gradient(180deg, #0078d4, #2b88d8);
+    z-index: 2;
+    max-width: 24px;
+    margin: 0 auto;
+}
+
+.chart-bar.previous {
+    background: linear-gradient(180deg, #999, #bbb);
+    z-index: 1;
+    max-width: 24px;
+    margin: 0 auto;
+    left: 8px;
+}
+
+.column-label {
+    position: absolute;
+    bottom: 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.legend-color.current {
+    background: #0078d4;
+}
+
+.legend-color.previous {
+    background: #999;
+}
+
+.legend-label {
+    font-size: 12px;
+    color: #666;
+}
+
+.comparison-analysis {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.comparison-analysis h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.comparison-analysis ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.comparison-analysis li {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.comparison-analysis li:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .entity-metrics,
+    .comparison-metrics {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .factor-item {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .factor-icon {
+        margin: 0 auto;
+    }
+}

@@ -1,0 +1,151 @@
+/* Top Zone Card Layout Fix */
+
+/* Override float-animation.css styles for the top zone */
+.top-zone {
+    height: 200px;
+    overflow: visible;
+    z-index: 10;
+}
+
+/* Fix card container layout */
+.top-zone .card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    padding: 0;
+}
+
+/* Fix card stack container positioning */
+.top-zone .card-stack-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: visible;
+    z-index: 1;
+}
+
+/* Ensure proper stacking of cards - override with !important */
+.top-zone .stacked-card {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    transform-origin: top center !important;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out, box-shadow 0.3s ease-out !important;
+}
+
+/* Reset stacking order for all cards with !important to override other styles */
+.top-zone .stacked-card:nth-child(1) {
+    z-index: 5 !important;
+    transform: translateY(0) scale(1) !important;
+    opacity: 1 !important;
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.03),
+        0 4px 8px rgba(0, 0, 0, 0.05),
+        0 8px 16px rgba(0, 0, 0, 0.06) !important;
+}
+
+.top-zone .stacked-card:nth-child(2) {
+    z-index: 4 !important;
+    transform: translateY(4px) translateX(4px) scale(0.98) !important;
+    opacity: 0.9 !important;
+}
+
+.top-zone .stacked-card:nth-child(3) {
+    z-index: 3 !important;
+    transform: translateY(8px) translateX(8px) scale(0.96) !important;
+    opacity: 0.8 !important;
+}
+
+.top-zone .stacked-card:nth-child(4) {
+    z-index: 2 !important;
+    transform: translateY(12px) translateX(12px) scale(0.94) !important;
+    opacity: 0.7 !important;
+}
+
+.top-zone .stacked-card:nth-child(5) {
+    z-index: 1 !important;
+    transform: translateY(16px) translateX(16px) scale(0.92) !important;
+    opacity: 0.6 !important;
+}
+
+/* Ensure each card stack container has proper z-index when hovered */
+.top-zone .card-stack-container:hover {
+    z-index: 100 !important;
+}
+
+/* Fix hover animations for stacked cards */
+.top-zone .card-stack-container:hover .stacked-card:nth-child(1) {
+    transform: translateY(-5px) scale(1.02) !important;
+    box-shadow: 
+        0 8px 16px rgba(0, 0, 0, 0.05),
+        0 16px 32px rgba(0, 0, 0, 0.07) !important;
+}
+
+.top-zone .card-stack-container:hover .stacked-card:nth-child(2) {
+    transform: translateY(40px) scale(1) !important;
+    opacity: 0.95 !important;
+}
+
+.top-zone .card-stack-container:hover .stacked-card:nth-child(3) {
+    transform: translateY(85px) scale(0.98) !important;
+    opacity: 0.9 !important;
+}
+
+.top-zone .card-stack-container:hover .stacked-card:nth-child(4) {
+    transform: translateY(130px) scale(0.96) !important;
+    opacity: 0.85 !important;
+}
+
+.top-zone .card-stack-container:hover .stacked-card:nth-child(5) {
+    transform: translateY(175px) scale(0.94) !important;
+    opacity: 0.8 !important;
+}
+
+/* Ensure card content is properly visible */
+.top-zone .stacked-card h3 {
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
+    color: #0078d4 !important;
+    opacity: 1 !important;
+}
+
+.top-zone .card-line {
+    height: 8px !important;
+    background: rgba(0, 120, 212, 0.1) !important;
+    border-radius: 4px !important;
+    margin-bottom: 8px !important;
+    width: 80% !important;
+    opacity: 1 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .top-zone .card-container {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+    }
+    
+    .top-zone .card-stack-container:hover .stacked-card:nth-child(2) {
+        transform: translateY(30px) scale(1) !important;
+    }
+    
+    .top-zone .card-stack-container:hover .stacked-card:nth-child(3) {
+        transform: translateY(60px) scale(0.98) !important;
+    }
+    
+    .top-zone .card-stack-container:hover .stacked-card:nth-child(4) {
+        transform: translateY(90px) scale(0.96) !important;
+    }
+    
+    .top-zone .card-stack-container:hover .stacked-card:nth-child(5) {
+        transform: translateY(120px) scale(0.94) !important;
+    }
+}

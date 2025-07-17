@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riskill Demo</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        /* Custom scrollbar styling to hide scrollbars but maintain functionality */
+        * {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+        *::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0078d4;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .search-bar {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            width: 250px;
+            background-color: white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #0078d4;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-areas: 
+                "header header"
+                "left-zone main-content";
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: 200px auto;
+            flex: 1;
+            gap: 8px;
+            padding: 10px;
+        }
+        
+        .main-content {
+            grid-area: main-content;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .front-page-row {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .main-canvas-row {
+            width: 100%;
+            flex: 1;
+        }
+
+        .anomalies-zone, .opportunities-zone {
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 12px;
+        }
+
+        .anomalies-zone {
+            background: linear-gradient(135deg, #f8f9ff 0%, #eef2ff 100%);
+            border-left: 3px solid #4285f4;
+        }
+        
+        .anomalies-zone h3, .opportunities-zone h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #202124;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .opportunities-zone {
+            background: linear-gradient(135deg, #f8fff9 0%, #eefff2 100%);
+            border-left: 3px solid #34a853;
+        }
+
+        .anomaly-item, .opportunity-item {
+            padding: 6px 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background-color: rgba(255,255,255,0.6);
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .anomaly-item:last-child, .opportunity-item:last-child {
+            border-bottom: none;
+        }
+
+        .metric-highlight {
+            color: #ea4335;
+            font-weight: 600;
+        }
+
+        .positive-metric {
+            color: #34a853;
+            font-weight: 600;
+        }
+
+        .source {
+            font-size: 12px;
+            color: #5f6368;
+            margin-top: 4px;
+        }
+
+        .header-zone {
+            grid-area: header;
+            background: linear-gradient(to right, #ffffff, #f5f5f5);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .left-zone {
+            grid-area: left-zone;
+            background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+        }
+
+        .front-page-zone {
+            background: linear-gradient(to bottom, #ffffff, #f8f8f8);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .strategic-narrative h2 {
+            margin-top: 0;
+            color: #202124;
+            font-weight: 500;
+        }
+
+        .narrative-content {
+            line-height: 1.6;
+        }
+
+        .main-canvas {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+        }
+
+        .main-card-container {
+            position: relative;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            padding-bottom: 32px;
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
+        .stacked-insight {
+            position: relative;
+        }
+
+        .stacked-insight::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 0;
+            background: white;
+            border-radius: 8px;
+            z-index: -1;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stacked-insight::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 0;
+            bottom: 0;
+            background: white;
+            border-radius: 8px;
+            z-index: -2;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        .card-body h4 {
+            margin-top: 0;
+            color: #202124;
+        }
+
+        .card-actions {
+            padding: 8px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-actions.hidden {
+            display: none;
+        }
+
+        .quick-reply {
+            padding: 8px 12px;
+            border-radius: 16px;
+            border: 1px solid #ddd;
+            width: 100%;
+        }
+
+        .prebuilt-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .prebuilt-actions button {
+            background: #f1f3f4;
+            border: none;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .prebuilt-actions button:hover {
+            background: #e8eaed;
+        }
+
+        .entity-link {
+            color: #1a73e8;
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
+
+        .left-wireframe-card {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 8px;
+        }
+
+        .left-card-line {
+            height: 8px;
+            background: #f1f3f4;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .left-card-line:last-child {
+            width: 60%;
+            margin-bottom: 0;
+        }
+
+        .main-wireframe-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .main-card-header {
+            height: 16px;
+            background: #f1f3f4;
+        }
+
+        .main-card-content {
+            padding: 12px;
+        }
+
+        .main-card-line {
+            height: 8px;
+            background: #f1f3f4;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .main-card-footer {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-card-button {
+            height: 8px;
+            width: 60px;
+            background: #f1f3f4;
+            border-radius: 4px;
+        }
+
+        .header-stream {
+            display: flex;
+            gap: 16px;
+            overflow-x: hidden;
+            padding: 8px 0;
+        }
+
+        .stream-item {
+            background: white;
+            border-radius: 8px;
+            padding: 8px 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            min-width: 200px;
+            animation: floatIn 0.5s ease-out forwards;
+        }
+
+        @keyframes floatIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stream-title {
+            font-size: 12px;
+            color: #5f6368;
+            margin-bottom: 4px;
+        }
+
+        .stream-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .stream-trend {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .trend-up {
+            color: #34a853;
+        }
+
+        .trend-down {
+            color: #ea4335;
+        }
+
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 200px 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-areas: 
+                    "header"
+                    "main-content";
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+
+            .left-zone {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">Riskill</div>
+                <div class="header-actions">
+                    <input type="text" class="search-bar" placeholder="Search...">
+                    <div class="user-profile">
+                        <div class="avatar"></div>
+                        <span>John Doe</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="header-zone">
+                <div class="header-stream">
+                    <div class="stream-item">
+                        <div class="stream-title">Revenue (MTD)</div>
+                        <div class="stream-value">$1.24M</div>
+                        <div class="stream-trend trend-up">+12.3% vs. prev. month</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Active Users</div>
+                        <div class="stream-value">24,892</div>
+                        <div class="stream-trend trend-up">+8.7% vs. prev. week</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Conversion Rate</div>
+                        <div class="stream-value">3.8%</div>
+                        <div class="stream-trend trend-up">+0.5% vs. prev. month</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Churn Rate</div>
+                        <div class="stream-value">1.2%</div>
+                        <div class="stream-trend trend-down">-0.3% vs. prev. month</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Support Tickets</div>
+                        <div class="stream-value">127</div>
+                        <div class="stream-trend trend-down">-18% vs. prev. week</div>
+                    </div>
+                </div>
+            </div>
+            <div class="left-zone">
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <!-- Additional cards to ensure vertical space is filled -->
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="front-page-row">
+                    <div class="front-page-zone">
+                        <div class="strategic-narrative">
+                            <h2>Strategic Insight Summary</h2>
+                            <div class="narrative-content">
+                                <p>Analysis of current risk metrics indicates a 23% improvement in overall security posture across the enterprise, with particularly strong performance in the European market segment. Key accounts including Globex Corp. and Massive Dynamic Inc. are showing exceptional growth patterns correlated with recent security enhancements and compliance improvements.</p>
+                                <p>The Q2 marketing campaign managed by Acme Marketing Agency has exceeded performance targets by 27%, with LinkedIn emerging as the top-performing channel. This success coincides with a 42% revenue spike in EU SaaS subscriptions and an 18% decrease in customer acquisition costs, suggesting a strong positive relationship between enhanced security measures and market perception.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-zones-container">
+                        <div class="anomalies-zone">
+                            <h3>Anomaly Feed</h3>
+                            <div class="anomaly-item">
+                                <p>Ad spend on SKU-A is <span class="metric-highlight">+37%</span> vs. 7-day avg.</p>
+                                <p class="source">Google Ads</p>
+                            </div>
+                            <div class="anomaly-item">
+                                <p>Support ticket volume from EU region <span class="positive-metric">up 25%</span>.</p>
+                                <p class="source">Zendesk</p>
+                            </div>
+                            <div class="anomaly-item">
+                                <p>New user activation rate <span class="metric-highlight">dropped by 15%</span> in last 24h.</p>
+                                <p class="source">Internal DB</p>
+                            </div>
+                        </div>
+                        <div class="opportunities-zone">
+                            <h3>Opportunities Radar</h3>
+                            <div class="opportunity-item">
+                                <p><span class="positive-metric">+$18K ARR Potential</span></p>
+                                <p>Tier-2 users upgrading trend suggests a targeted nudge campaign could accelerate revenue.</p>
+                            </div>
+                            <div class="opportunity-item">
+                                <p><span class="positive-metric">+8% Conversion Rate</span></p>
+                                <p>A/B test on pricing page shows variant B is outperforming. Recommend rolling out to 100%.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="main-canvas-row">
+                    <div class="main-canvas">
+                        <div class="main-card-container">
+                            <div class="insight-card stacked-insight">
+                                <div class="card-body">
+                                    <h4>Revenue Spike Detected 🚀</h4>
+                                    <p>Revenue from EU SaaS subscriptions increased by 42% last week compared to the previous 4-week average. Key accounts like <span class="entity-link organization" data-entity="Globex Corp.">Globex Corp.</span> and <span class="entity-link organization" data-entity="Massive Dynamic Inc.">Massive Dynamic Inc.</span> have shown particularly strong growth. This appears to be correlated with the new feature launch and targeted marketing campaign led by <span class="entity-link contact" data-entity="Sarah J. Reynolds">Sarah J. Reynolds</span>.</p>
+                                </div>
+                                <div class="card-actions hidden">
+                                    <input class="quick-reply" placeholder="Ask Copilot…" />
+                                    <div class="prebuilt-actions">
+                                        <button>What's driving this?</button>
+                                        <button>Compare to last month</button>
+                                        <button>View source data</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card stacked-insight">
+                                <div class="card-body">
+                                    <h4>Churn Risk Identified 🔍</h4>
+                                    <p>Three enterprise accounts showing decreased engagement patterns over the last 30 days: <span class="entity-link organization" data-entity="Dugan Family Funeral Home">Dugan Family Funeral Home</span>, <span class="entity-link organization" data-entity="Initech LLC">Initech LLC</span>, and <span class="entity-link organization" data-entity="Stark Industries">Stark Industries</span>. Primary contact <span class="entity-link contact" data-entity="Michael B. Thompson">Michael B. Thompson</span> (<span class="entity-link email" data-entity="m.thompson@initech.com">m.thompson@initech.com</span>) has not logged in for 23 days. Usage metrics indicate potential churn risk based on historical patterns.</p>
+                                </div>
+                                <div class="card-actions hidden">
+                                    <input class="quick-reply" placeholder="Ask Copilot…" />
+                                    <div class="prebuilt-actions">
+                                        <button>Show account details</button>
+                                        <button>Analyze engagement trends</button>
+                                        <button>Generate outreach plan</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card stacked-insight">
+                                <div class="card-body">
+                                    <h4>Security Anomaly Report 🛡️</h4>
+                                    <p>Unusual login patterns detected from 5 user accounts across APAC region, including <span class="entity-link contact" data-entity="Jennifer K. Martinez">Jennifer K. Martinez</span> and <span class="entity-link contact" data-entity="Robert T. Wilson">Robert T. Wilson</span> from <span class="entity-link organization" data-entity="Nakatomi Trading Group">Nakatomi Trading Group</span>. All access attempts were successfully authenticated but occurred outside normal business hours. Security team at <span class="entity-link organization" data-entity="Cyberdyne Systems">Cyberdyne Systems</span> has been notified. Risk score: Moderate.</p>
+                                </div>
+                                <div class="card-actions hidden">
+                                    <input class="quick-reply" placeholder="Ask Copilot…" />
+                                    <div class="prebuilt-actions">
+                                        <button>View security logs</button>
+                                        <button>Contact affected users</button>
+                                        <button>Update security policy</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card stacked-insight">
+                                <div class="card-body">
+                                    <h4>Marketing Campaign Performance 📈</h4>
+                                    <p>Q2 digital campaign managed by <span class="entity-link organization" data-entity="Acme Marketing Agency">Acme Marketing Agency</span> is outperforming projections by 27%. Campaign manager <span class="entity-link contact" data-entity="David P. Anderson">David P. Anderson</span> reports cost per acquisition decreased by 18% while conversion rate increased 12% compared to previous quarter. Top performing channel: LinkedIn, with exceptional results in the <span class="entity-link organization" data-entity="European Healthcare Sector">European Healthcare Sector</span>.</p>
+                                </div>
+                                <div class="card-actions hidden">
+                                    <input class="quick-reply" placeholder="Ask Copilot…" />
+                                    <div class="prebuilt-actions">
+                                        <button>Channel breakdown</button>
+                                        <button>Budget optimization</button>
+                                        <button>Extend campaign?</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card stacked-insight">
+                                <div class="card-body">
+                                    <h4>Product Usage Insights 💡</h4>
+                                    <p>Feature adoption analysis shows 78% of enterprise users now utilizing the new risk assessment module, exceeding adoption targets by 15%. <span class="entity-link organization" data-entity="Wayne Enterprises">Wayne Enterprises</span> and <span class="entity-link organization" data-entity="Soylent Corp">Soylent Corp</span> are leading adoption with implementation led by <span class="entity-link contact" data-entity="Patricia L. Johnson">Patricia L. Johnson</span> (<span class="entity-link email" data-entity="p.johnson@waynetech.com">p.johnson@waynetech.com</span>). Average session time with this feature: 12.4 minutes.</p>
+                                </div>
+                                <div class="card-actions hidden">
+                                    <input class="quick-reply" placeholder="Ask Copilot…" />
+                                    <div class="prebuilt-actions">
+                                        <button>Usage patterns</button>
+                                        <button>Feature satisfaction</button>
+                                        <button>Enhancement opportunities</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card stacked-insight">
+                                <div class="card-body">
+                                    <h4>Operational Efficiency Gains ⚙️</h4>
+                                    <p>System performance metrics indicate 23% improvement in processing speed following infrastructure upgrade. API response times reduced by 42% and resource utilization optimized across all regions.</p>
+                                </div>
+                                <div class="card-actions hidden">
+                                    <input class="quick-reply" placeholder="Ask Copilot…" />
+                                    <div class="prebuilt-actions">
+                                        <button>Performance details</button>
+                                        <button>Cost implications</button>
+                                        <button>Further optimizations</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Include Anime.js and interaction scripts -->
+    <script src="anime.min.js"></script>
+    <script src="stack-interaction.js"></script>
+    <script src="responsive-cards.js"></script>
+    <script src="strategic-narrative.js"></script>
+    <script src="masonry-layout.js"></script>
+    <script src="float-animation.js"></script>
+    <script src="left-card-animation.js"></script>
+    <script src="main-canvas-animation.js"></script>
+    <script src="revenue-metrics.js"></script>
+    <script src="operational-efficiency.js"></script>
+    <script src="churn-metrics.js"></script>
+    <script src="marketing-roi.js"></script>
+    <script src="growth-opportunities.js"></script>
+    <script src="copilot-integration.js"></script>
+    <script src="perplexity-card-interaction.js"></script>
+    <script src="card-animations.js"></script>
+    <script src="entity-linking.js"></script>
+    <script src="entity-drill-animations.js"></script>
+    <script src="test-animations.js"></script>
+</body>
+</html>

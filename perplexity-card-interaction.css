@@ -1,0 +1,395 @@
+/* Perplexity-style Card Interaction System */
+
+/* Base card styling */
+.insight-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.insight-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+}
+
+.card-body {
+    margin-bottom: 12px;
+}
+
+.card-body h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.card-body p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+    margin-bottom: 0;
+}
+
+/* Card actions - hidden by default */
+.card-actions {
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    max-height: 200px;
+    opacity: 1;
+}
+
+.card-actions.hidden {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    border-top: none;
+    pointer-events: none;
+}
+
+/* Quick reply input */
+.quick-reply {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.02);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+    margin-bottom: 12px;
+}
+
+.quick-reply:focus {
+    border-color: rgba(0, 120, 212, 0.4);
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.1);
+}
+
+/* Prebuilt actions */
+.prebuilt-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.prebuilt-actions button {
+    background: rgba(0, 120, 212, 0.08);
+    border: none;
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: rgb(0, 120, 212);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.prebuilt-actions button:hover {
+    background: rgba(0, 120, 212, 0.12);
+}
+
+/* Highlight interaction */
+.highlight-trigger {
+    position: absolute;
+    background: linear-gradient(135deg, rgba(0, 120, 212, 0.9), rgba(0, 150, 255, 0.9));
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+}
+
+.highlight-trigger.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+}
+
+.highlight-trigger::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+}
+
+/* Copilot response area */
+.copilot-response {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    position: relative;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.copilot-response.visible {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 16px;
+}
+
+.copilot-response::before {
+    content: "Copilot";
+    position: absolute;
+    top: -8px;
+    left: 16px;
+    background: linear-gradient(135deg, #0078d4, #00a2ed);
+    color: white;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* Text highlight styling */
+.highlight-text {
+    background: rgba(0, 120, 212, 0.1);
+    border-radius: 2px;
+    padding: 0 2px;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Card loading state */
+.card-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        rgba(0, 120, 212, 0), 
+        rgba(0, 120, 212, 0.8), 
+        rgba(0, 120, 212, 0));
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-loading.visible {
+    opacity: 1;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* New card animation */
+.new-card {
+    animation: newCard 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes newCard {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Source Data View styling */
+.source-data-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.source-data-view.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+}
+
+.source-data-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.source-data-header h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.close-source-data {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.close-source-data:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #666;
+}
+
+.source-data-content {
+    padding: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.data-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.data-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.data-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.02);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+    color: #555;
+}
+
+.data-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    color: #333;
+}
+
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table tr:hover td {
+    background: rgba(0, 120, 212, 0.03);
+}
+
+.data-table .positive {
+    color: #0a8043;
+}
+
+.data-table .negative {
+    color: #d93025;
+}
+
+.data-table .neutral {
+    color: #666;
+}
+
+/* Continuous scroll styling */
+.main-canvas {
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding: 20px;
+}
+
+/* Document-like styling */
+.main-card-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-bottom: 100px; /* Space at bottom for continuous scroll feel */
+}
+
+/* Top zone as executive signals */
+.top-zone {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: linear-gradient(135deg, #ffffff, #f9fafb);
+}
+
+/* Left zone as canonical object status */
+.left-zone {
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    background: linear-gradient(135deg, #ffffff, #f9fafb);
+}
+
+/* Font updates for document feel */
+body {
+    font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    background-color: #f9fafb;
+    color: #333;
+}
+
+/* Ultra light background */
+.main-container {
+    background-color: #f9fafb;
+}
+
+/* Card stacking effect */
+.stacked-insight {
+    position: relative;
+}
+
+.stacked-insight::before,
+.stacked-insight::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    height: 10px;
+    background: white;
+    border-radius: 5px;
+    z-index: -1;
+}
+
+.stacked-insight::before {
+    bottom: -5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.stacked-insight::after {
+    bottom: -10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.02);
+}

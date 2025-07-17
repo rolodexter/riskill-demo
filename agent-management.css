@@ -1,0 +1,407 @@
+/* Agent Management Interface Styles */
+.left-zone {
+    padding: 16px 12px;
+    background: linear-gradient(160deg, rgba(252, 253, 255, 0.7), rgba(248, 250, 254, 0.9));
+    border-radius: 8px;
+    overflow-y: auto;
+    max-height: calc(100vh - 180px);
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.left-zone::-webkit-scrollbar {
+    display: none;
+}
+
+/* Agent Management Header */
+.agent-management-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.agent-management-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1a2b42;
+    letter-spacing: -0.2px;
+    margin: 0;
+}
+
+.agent-management-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.agent-action-button {
+    background: transparent;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #5f6368;
+    transition: all 0.2s ease;
+}
+
+.agent-action-button:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    color: #202124;
+}
+
+/* Agent Status Indicators */
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    display: inline-block;
+}
+
+.status-active {
+    background: #34a853;
+    box-shadow: 0 0 0 2px rgba(52, 168, 83, 0.2);
+}
+
+.status-pending {
+    background: #fbbc05;
+    box-shadow: 0 0 0 2px rgba(251, 188, 5, 0.2);
+}
+
+.status-attention {
+    background: #ea4335;
+    box-shadow: 0 0 0 2px rgba(234, 67, 53, 0.2);
+    animation: pulse 2s infinite;
+}
+
+.status-inactive {
+    background: #9aa0a6;
+    box-shadow: 0 0 0 2px rgba(154, 160, 166, 0.2);
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(234, 67, 53, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(234, 67, 53, 0);
+    }
+}
+
+/* Agent Card */
+.agent-card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.agent-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.agent-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.agent-card:hover::before {
+    opacity: 1;
+}
+
+.agent-card.active::before {
+    background: linear-gradient(to bottom, #34a853, #0f9d58);
+}
+
+.agent-card.pending::before {
+    background: linear-gradient(to bottom, #fbbc05, #f09300);
+}
+
+.agent-card.attention::before {
+    background: linear-gradient(to bottom, #ea4335, #c5221f);
+}
+
+.agent-card.inactive::before {
+    background: linear-gradient(to bottom, #9aa0a6, #80868b);
+}
+
+.agent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.agent-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #202124;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.agent-type {
+    font-size: 11px;
+    color: #5f6368;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 2px 6px;
+    border-radius: 12px;
+    margin-left: 8px;
+}
+
+.agent-menu {
+    color: #5f6368;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.agent-menu:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    color: #202124;
+}
+
+.agent-details {
+    margin-bottom: 8px;
+}
+
+.agent-detail {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: #5f6368;
+    margin-bottom: 4px;
+}
+
+.agent-detail-label {
+    width: 80px;
+    color: #202124;
+}
+
+.agent-connections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.connection-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.04);
+    color: #5f6368;
+    display: flex;
+    align-items: center;
+}
+
+.connection-badge.active {
+    background: rgba(52, 168, 83, 0.1);
+    color: #0f9d58;
+}
+
+.connection-badge.error {
+    background: rgba(234, 67, 53, 0.1);
+    color: #c5221f;
+}
+
+.connection-badge.pending {
+    background: rgba(251, 188, 5, 0.1);
+    color: #f09300;
+}
+
+/* Agent Actions */
+.agent-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.agent-action {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: white;
+    color: #5f6368;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.agent-action:hover {
+    background: #f8f9fa;
+    color: #202124;
+    border-color: rgba(0, 0, 0, 0.12);
+}
+
+.agent-action.primary {
+    background: rgba(66, 133, 244, 0.08);
+    color: #1a73e8;
+    border-color: rgba(66, 133, 244, 0.2);
+}
+
+.agent-action.primary:hover {
+    background: rgba(66, 133, 244, 0.12);
+}
+
+.agent-action.attention {
+    background: rgba(234, 67, 53, 0.08);
+    color: #ea4335;
+    border-color: rgba(234, 67, 53, 0.2);
+}
+
+.agent-action.attention:hover {
+    background: rgba(234, 67, 53, 0.12);
+}
+
+/* Agent Request Card */
+.agent-request {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 1), rgba(252, 253, 255, 0.95));
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-left: 3px solid #ea4335;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.request-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.request-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #ea4335;
+    margin: 0;
+}
+
+.request-time {
+    font-size: 11px;
+    color: #5f6368;
+}
+
+.request-message {
+    font-size: 12px;
+    color: #3c4043;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.request-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* Filter Section */
+.agent-filters {
+    margin-bottom: 16px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #5f6368;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.filter-option {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 16px;
+    background: white;
+    color: #5f6368;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.filter-option:hover {
+    background: #f8f9fa;
+    color: #202124;
+}
+
+.filter-option.active {
+    background: #1a73e8;
+    color: white;
+    border-color: #1a73e8;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 24px 16px;
+    text-align: center;
+    color: #5f6368;
+    font-size: 13px;
+}
+
+.empty-state-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .left-zone {
+        padding: 12px 8px;
+    }
+    
+    .agent-card {
+        padding: 10px;
+    }
+}

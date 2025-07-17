@@ -1,0 +1,109 @@
+/* Left Zone Card Animation Styles */
+.left-zone {
+    overflow: visible; /* Allow animations to extend beyond zone */
+    z-index: 5; /* Ensure proper stacking context for overflow */
+}
+
+.left-card-container {
+    overflow: visible; /* Allow animations to extend beyond container */
+    position: relative; /* Establish stacking context */
+}
+
+.left-wireframe-card {
+    transition: transform 0.2s cubic-bezier(0, 0.9, 0.1, 1), 
+                box-shadow 0.2s cubic-bezier(0, 0.9, 0.1, 1),
+                background-color 0.2s cubic-bezier(0, 0.9, 0.1, 1); /* Crisp, quick transitions */
+    will-change: transform, box-shadow; /* Optimize for animation performance */
+    position: relative;
+    z-index: 1;
+}
+
+/* Enhanced hover effect */
+.left-wireframe-card:hover {
+    transform: translateX(8px) scale(1.02);
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.04),
+        0 8px 16px rgba(0, 0, 0, 0.06),
+        0 12px 24px rgba(0, 0, 0, 0.08);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.9));
+    z-index: 10; /* Bring hovered card to front */
+}
+
+/* Add subtle glow effect on hover */
+.left-wireframe-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 8px;
+    box-shadow: 0 0 0 0 rgba(67, 160, 71, 0);
+    opacity: 0;
+    transition: opacity 0.2s cubic-bezier(0, 0.9, 0.1, 1), 
+                box-shadow 0.2s cubic-bezier(0, 0.9, 0.1, 1);
+    pointer-events: none;
+}
+
+.left-wireframe-card:hover::after {
+    opacity: 1;
+    box-shadow: 0 0 20px 0 rgba(67, 160, 71, 0.15);
+}
+
+/* Enhanced card line animations */
+.left-wireframe-card:hover .left-card-line {
+    background: linear-gradient(90deg, rgba(67, 160, 71, 0.2), rgba(67, 160, 71, 0.15));
+    transform: translateX(4px);
+}
+
+.left-wireframe-card .left-card-line {
+    transition: background 0.2s cubic-bezier(0, 0.9, 0.1, 1),
+                transform 0.2s cubic-bezier(0, 0.9, 0.1, 1);
+    transform: translateX(0);
+}
+
+/* Staggered animation for card lines */
+.left-wireframe-card:hover .left-card-line:nth-child(1) {
+    transition-delay: 0s;
+}
+
+.left-wireframe-card:hover .left-card-line:nth-child(2) {
+    transition-delay: 0.02s;
+}
+
+.left-wireframe-card:hover .left-card-line:nth-child(3) {
+    transition-delay: 0.04s;
+}
+
+.left-wireframe-card:hover .left-card-line:nth-child(4) {
+    transition-delay: 0.06s;
+}
+
+/* Add title to left cards */
+.left-card-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #43a047;
+    margin-bottom: 12px;
+    opacity: 0.9;
+    transition: opacity 0.2s cubic-bezier(0, 0.9, 0.1, 1),
+                transform 0.2s cubic-bezier(0, 0.9, 0.1, 1);
+    transform: translateX(0);
+}
+
+.left-wireframe-card:hover .left-card-title {
+    opacity: 1;
+    transform: translateX(4px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .left-wireframe-card:hover {
+        transform: translateX(5px) scale(1.01);
+    }
+    
+    .left-wireframe-card:hover .left-card-line,
+    .left-wireframe-card:hover .left-card-title {
+        transform: translateX(2px);
+    }
+}

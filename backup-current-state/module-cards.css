@@ -1,0 +1,166 @@
+/* Module Cards - Enterprise Elegance Styling with Color Coding */
+
+.module-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+    width: 100%;
+}
+
+/* Base card styling */
+.module-card {
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Card type styling - neutral/default (blue) */
+.card-neutral {
+    background: linear-gradient(135deg, #ffffff 0%, #f9fbff 80%, #f5f8ff 100%);
+}
+
+/* Card type styling - urgent/critical (red) */
+.card-urgent {
+    background: linear-gradient(135deg, #ffffff 0%, #fff9f9 80%, #fff5f5 100%);
+}
+
+/* Card type styling - warning/caution (amber) */
+.card-warning {
+    background: linear-gradient(135deg, #ffffff 0%, #fffcf5 80%, #fff9ee 100%);
+}
+
+/* Card type styling - positive/success (green) */
+.card-positive {
+    background: linear-gradient(135deg, #ffffff 0%, #f7fcf7 80%, #f2faf2 100%);
+}
+
+/* Card type styling - informational (purple) */
+.card-info {
+    background: linear-gradient(135deg, #ffffff 0%, #faf8ff 80%, #f5f2ff 100%);
+}
+
+.module-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+
+.module-name {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 3px;
+    opacity: 0.85;
+}
+
+/* Module name colors by card type */
+.card-neutral .module-name { color: #5f6368; }
+.card-urgent .module-name { color: #d93025; }
+.card-warning .module-name { color: #e37400; }
+.card-positive .module-name { color: #188038; }
+.card-info .module-name { color: #673ab7; }
+
+.module-title {
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 0;
+    margin-bottom: 10px;
+    letter-spacing: 0.01em;
+}
+
+/* Module title colors by card type */
+.card-neutral .module-title { color: #4285f4; }
+.card-urgent .module-title { color: #d93025; }
+.card-warning .module-title { color: #e37400; }
+.card-positive .module-title { color: #188038; }
+.card-info .module-title { color: #673ab7; }
+
+.module-insight {
+    font-size: 13px;
+    line-height: 1.4;
+    color: #202124;
+    margin-bottom: 0;
+}
+
+/* Metric colors by card type */
+.card-neutral .metric { color: #4285f4; }
+.card-urgent .metric { color: #d93025; }
+.card-warning .metric { color: #e37400; }
+.card-positive .metric { color: #188038; }
+.card-info .metric { color: #673ab7; }
+
+/* Left accent border on hover */
+.module-card:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-neutral:before { background: linear-gradient(to bottom, rgba(66, 133, 244, 0.7), rgba(138, 180, 248, 0.3)); }
+.card-urgent:before { background: linear-gradient(to bottom, rgba(217, 48, 37, 0.7), rgba(242, 139, 130, 0.3)); }
+.card-warning:before { background: linear-gradient(to bottom, rgba(227, 116, 0, 0.7), rgba(251, 188, 4, 0.3)); }
+.card-positive:before { background: linear-gradient(to bottom, rgba(24, 128, 56, 0.7), rgba(52, 168, 83, 0.3)); }
+.card-info:before { background: linear-gradient(to bottom, rgba(103, 58, 183, 0.7), rgba(149, 117, 205, 0.3)); }
+
+.module-card:hover:before {
+    opacity: 1;
+}
+
+/* Correlation indicator */
+.correlation {
+    font-size: 12px;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(0,0,0,0.04);
+}
+
+/* Correlation colors by card type */
+.card-neutral .correlation { color: #5f6368; }
+.card-urgent .correlation { color: #a52714; }
+.card-warning .correlation { color: #b06000; }
+.card-positive .correlation { color: #0d652d; }
+.card-info .correlation { color: #4a148c; }
+
+.correlation-arrow {
+    display: inline-block;
+    margin: 0 4px;
+}
+
+/* Arrow colors by card type */
+.card-neutral .correlation-arrow { color: #4285f4; }
+.card-urgent .correlation-arrow { color: #d93025; }
+.card-warning .correlation-arrow { color: #e37400; }
+.card-positive .correlation-arrow { color: #188038; }
+.card-info .correlation-arrow { color: #673ab7; }
+
+/* Priority indicator */
+.priority-indicator {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.priority-urgent { background-color: #d93025; }
+.priority-warning { background-color: #e37400; }
+.priority-normal { background-color: #4285f4; }
+.priority-low { background-color: #188038; }
+
+/* Personalized greeting */
+.personal-mention {
+    font-style: italic;
+    opacity: 0.9;
+    margin-top: 8px;
+    font-size: 13px;
+}

@@ -1,0 +1,317 @@
+/* Card DNA System - Defining the different card types for the Front Page OS */
+
+/* Base card styling (inherited from perplexity-card-interaction.css) */
+.insight-card {
+    position: relative;
+}
+
+/* Card Type Indicators */
+.card-type-indicator {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: white;
+    background: rgba(0, 0, 0, 0.1);
+    opacity: 0.7;
+}
+
+/* Inbox Card - For emails, tickets, messages, alerts */
+.card-inbox {
+    border-left: 3px solid rgba(65, 105, 225, 0.7);
+}
+
+.card-inbox .card-type-indicator {
+    background: linear-gradient(135deg, #4169e1, #6495ed);
+}
+
+.card-inbox h4::before {
+    content: "📥 ";
+}
+
+/* Correlation Card - Synthesizes multiple inputs into insight */
+.card-correlation {
+    border-left: 3px solid rgba(75, 0, 130, 0.7);
+}
+
+.card-correlation .card-type-indicator {
+    background: linear-gradient(135deg, #4b0082, #9370db);
+}
+
+.card-correlation h4::before {
+    content: "🔄 ";
+}
+
+/* Action Card - Reply, escalate, create doc */
+.card-action {
+    border-left: 3px solid rgba(0, 128, 0, 0.7);
+}
+
+.card-action .card-type-indicator {
+    background: linear-gradient(135deg, #008000, #32cd32);
+}
+
+.card-action h4::before {
+    content: "✍️ ";
+}
+
+/* Copilot Card - AI interface with triggers + suggestions */
+.card-copilot {
+    border-left: 3px solid rgba(0, 120, 212, 0.7);
+}
+
+.card-copilot .card-type-indicator {
+    background: linear-gradient(135deg, #0078d4, #00a2ed);
+}
+
+.card-copilot h4::before {
+    content: "🤖 ";
+}
+
+/* Attachment Card - File preview, correlation, promptable */
+.card-attachment {
+    border-left: 3px solid rgba(255, 140, 0, 0.7);
+}
+
+.card-attachment .card-type-indicator {
+    background: linear-gradient(135deg, #ff8c00, #ffa500);
+}
+
+.card-attachment h4::before {
+    content: "📄 ";
+}
+
+/* Memory Card - Last touched, next step, provenance */
+.card-memory {
+    border-left: 3px solid rgba(128, 0, 128, 0.7);
+}
+
+.card-memory .card-type-indicator {
+    background: linear-gradient(135deg, #800080, #ba55d3);
+}
+
+.card-memory h4::before {
+    content: "🧠 ";
+}
+
+/* System integrations indicators */
+.integration-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 10px;
+    margin-right: 6px;
+    color: white;
+}
+
+.integration-outlook {
+    background: #0078d4;
+}
+
+.integration-slack {
+    background: #4A154B;
+}
+
+.integration-salesforce {
+    background: #00A1E0;
+}
+
+.integration-drive {
+    background: #0F9D58;
+}
+
+.integration-internal {
+    background: #333333;
+}
+
+/* Card metadata */
+.card-metadata {
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+    font-size: 11px;
+    color: #777;
+}
+
+.card-timestamp {
+    margin-right: 12px;
+}
+
+.card-source {
+    display: flex;
+    align-items: center;
+}
+
+/* Card evolution states */
+.card-evolving::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        rgba(0, 120, 212, 0), 
+        rgba(0, 120, 212, 0.8), 
+        rgba(0, 120, 212, 0));
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+/* Reply system enhancements */
+.card-reply-container {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.card-reply-thread {
+    margin-bottom: 12px;
+}
+
+.reply-message {
+    padding: 8px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    max-width: 85%;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.reply-user {
+    background: rgba(0, 120, 212, 0.1);
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+.reply-system {
+    background: rgba(0, 0, 0, 0.05);
+    margin-right: auto;
+    border-bottom-left-radius: 4px;
+}
+
+/* Action buttons for card types */
+.card-actions-specialized {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.action-button {
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.action-button.primary {
+    background: rgba(0, 120, 212, 0.1);
+    color: rgb(0, 120, 212);
+}
+
+.action-button.primary:hover {
+    background: rgba(0, 120, 212, 0.2);
+}
+
+.action-button.secondary {
+    background: rgba(0, 0, 0, 0.05);
+    color: #555;
+}
+
+.action-button.secondary:hover {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+/* File preview for attachment cards */
+.file-preview {
+    margin-top: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.file-preview-header {
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.file-preview-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+}
+
+.file-preview-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.file-preview-content {
+    padding: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 12px;
+    color: #333;
+    background: white;
+}
+
+/* Memory card timeline */
+.memory-timeline {
+    margin-top: 12px;
+    padding-left: 12px;
+    border-left: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.memory-event {
+    position: relative;
+    padding-left: 16px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #555;
+}
+
+.memory-event::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.memory-event:last-child::before {
+    background: rgba(0, 120, 212, 0.7);
+    border: none;
+}
+
+/* Card evolution animation */
+@keyframes cardEvolution {
+    0% {
+        opacity: 0.7;
+        transform: translateY(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-evolved {
+    animation: cardEvolution 0.5s ease forwards;
+}

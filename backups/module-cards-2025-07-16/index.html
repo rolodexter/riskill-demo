@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riskill Demo</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        /* Custom scrollbar styling to hide scrollbars but maintain functionality */
+        * {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+        *::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0078d4;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .search-bar {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            width: 250px;
+            background-color: white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .username {
+            font-size: 13px;
+            color: #555;
+            font-weight: 400;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #0078d4;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-areas: 
+                "header header"
+                "left-zone main-content";
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: 150px auto;
+            flex: 1;
+            gap: 8px;
+            padding: 10px;
+        }
+        
+        .main-content {
+            grid-area: main-content;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .front-page-row {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .main-canvas-row {
+            width: 100%;
+            flex: 1;
+        }
+
+        /* Removed duplicate CSS for anomalies and opportunities zones */
+
+        /* Removed duplicate CSS for anomaly-item and opportunity-item */
+        
+        .strategic-narrative {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+            max-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .narrative-date {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        
+        .narrative-content {
+            line-height: 1.6;
+            color: #333;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .narrative-content p {
+            margin-bottom: 16px;
+        }
+
+        .metric-highlight {
+            color: #ea4335;
+            font-weight: 600;
+        }
+
+        .positive-metric {
+            color: #34a853;
+            font-weight: 600;
+        }
+
+        .source {
+            font-size: 12px;
+            color: #5f6368;
+            margin-top: 4px;
+        }
+        
+        /* Copilot Chat Panel Styles */
+        .copilot-chat-panel {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            right: -380px; /* Start off-screen */
+            width: 360px;
+            height: 500px;
+            max-height: 80vh;
+            background: linear-gradient(145deg, #fbfdff, #f0f5fc);
+            border-radius: 16px 0 0 16px;
+            box-shadow: 
+                -2px 0 20px rgba(0, 0, 0, 0.04),
+                -1px 0 5px rgba(0, 0, 0, 0.02),
+                inset 1px 0 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            opacity: 0; /* Start invisible for fade-in effect */
+            backdrop-filter: blur(10px);
+        }
+        
+        .copilot-chat-panel.active {
+            right: 0;
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .copilot-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            background: linear-gradient(120deg, rgba(255,255,255,0.95), rgba(252,254,255,0.98));
+            border-radius: 16px 0 0 0;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.01);
+            position: relative;
+        }
+        
+        /* Removed h3 styling for minimalist design */
+        
+        .close-copilot {
+            background: rgba(0, 0, 0, 0.03);
+            border: none;
+            cursor: pointer;
+            color: #5f6368;
+            font-size: 16px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .close-copilot:hover {
+            background-color: rgba(0, 0, 0, 0.06);
+            color: #202124;
+            transform: scale(1.05);
+        }
+        
+        .close-copilot:active {
+            transform: scale(0.95);
+        }
+        
+        .close-copilot::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        
+        .close-copilot:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .copilot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+            background: linear-gradient(180deg, rgba(250,252,255,0.8), rgba(246,248,252,0.9));
+            position: relative;
+        }
+        
+        .copilot-messages::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(to top, rgba(246,248,252,0.9), rgba(246,248,252,0));
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            max-width: 85%;
+            position: relative;
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+        }
+        
+        .message:hover {
+            transform: translateY(-1px);
+        }
+        
+        .user-message {
+            margin-left: auto;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 12px 16px;
+            border-radius: 16px 16px 2px 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02);
+            color: #1a2b42;
+        }
+        
+        .copilot-message {
+            background: linear-gradient(135deg, #ffffff, #f5f7fa);
+            padding: 12px 16px;
+            border-radius: 16px 16px 16px 2px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 2px 8px rgba(0, 0, 0, 0.01);
+            color: #1a2b42;
+            position: relative;
+        }
+        
+        .copilot-message::before {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #4285f4, #34a853);
+            border-radius: 3px;
+            opacity: 0.5;
+        }
+        
+        .card-in-chat {
+            width: 100%;
+            margin-bottom: 16px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            padding: 12px;
+        }
+        
+        .copilot-input-area {
+            padding: 18px 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.02);
+            display: flex;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(252,254,255,0.98), rgba(248,250,254,0.99));
+            border-radius: 0 0 0 16px;
+            position: relative;
+            box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.01);
+        }
+        
+        .copilot-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 28px;
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+        }
+        
+        .copilot-input:focus {
+            border-color: rgba(66, 133, 244, 0.5);
+            box-shadow: 0 0 0 1px rgba(66, 133, 244, 0.2), 0 2px 4px rgba(0, 0, 0, 0.02);
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+        }
+        
+        .send-button {
+            background: linear-gradient(135deg, #4285f4, #0d47a1);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin-left: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .send-button:hover {
+            transform: translateY(-1px) scale(1.05);
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        .send-button:active {
+            transform: translateY(1px) scale(0.98);
+        }
+        
+        .send-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        
+        .send-button:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .header-zone {
+            grid-area: header;
+            background: linear-gradient(to right, #ffffff, #f5f5f5);
+            border-radius: 8px;
+            padding: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .header-stream {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 0 4px;
+        }
+        
+        .stream-item {
+            padding: 6px;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .stream-title {
+            font-size: 12px;
+            color: #5f6368;
+            margin-bottom: 2px;
+        }
+        
+        .stream-value {
+            font-size: 18px;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 2px;
+        }
+        
+        .stream-trend {
+            font-size: 11px;
+            font-weight: 400;
+        }
+        
+        .trend-up {
+            color: #188038;
+        }
+        
+        .trend-down {
+            color: #d93025;
+        }
+
+        .left-zone {
+            grid-area: left-zone;
+            background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+        }
+
+        .front-page-zone {
+            background: linear-gradient(to bottom, #ffffff, #f8f8f8);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Right zone styling for enterprise elegance */
+        .right-zones-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            height: 100%;
+            flex: 0 0 35%;
+            max-width: 35%;
+        }
+        
+        .anomalies-zone, .opportunities-zone {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+        
+        /* Removed left trim/highlight from zones as requested */
+        
+        .anomalies-zone h3, .opportunities-zone h3 {
+            margin: 0 0 8px 0;
+            font-size: 15px;
+            font-weight: 500;
+            color: #202124;
+            letter-spacing: 0.2px;
+            padding-left: 8px;
+        }
+        
+        .anomaly-item, .opportunity-item {
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin-bottom: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.2s ease-out;
+        }
+        
+        .anomaly-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f8ff 70%, #eef2ff 100%);
+        }
+        
+        .opportunity-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f5fff8 70%, #eefff2 100%);
+        }
+        
+        .anomaly-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(66, 133, 244, 0.08);
+            background: linear-gradient(135deg, #ffffff 0%, #f0f5ff 70%, #e8eeff 100%);
+        }
+        
+        .opportunity-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(52, 168, 83, 0.08);
+            background: linear-gradient(135deg, #ffffff 0%, #f0fff5 70%, #e8ffed 100%);
+        }
+        
+        .anomaly-item p, .opportunity-item p {
+            margin: 0 0 3px 0;
+            font-size: 12px;
+            line-height: 1.35;
+            color: #3c4043;
+            letter-spacing: 0.1px;
+        }
+        
+        .source {
+            color: #5f6368;
+            font-size: 10px;
+            margin: 0;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        
+        .metric-highlight {
+            color: #d93025;
+            font-weight: 500;
+        }
+        
+        .positive-metric {
+            color: #188038;
+            font-weight: 500;
+        }
+
+        .strategic-narrative h2 {
+            margin-top: 0;
+            color: #202124;
+            font-weight: 500;
+        }
+
+        .narrative-content {
+            line-height: 1.6;
+        }
+
+        .main-canvas {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+        }
+
+        .main-card-container {
+            position: relative;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            padding-bottom: 32px;
+        }
+
+        .card-reference {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04), 0 0 1px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #f0f4ff, #e6f0ff);
+            padding: 14px 16px;
+            font-size: 0.9em;
+            position: relative;
+            transition: all 0.2s ease-out;
+            overflow: hidden;
+        }
+        
+        .card-reference::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #4285f4, #0d47a1);
+        }
+        
+        .card-reference:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-weight: 500;
+            color: #1a2b42;
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.2px;
+        }
+        
+        .card-title::before {
+            content: '📄';
+            margin-right: 10px;
+            font-size: 14px;
+            background: linear-gradient(135deg, #4285f4, #0d47a1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            max-height: 180px;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
+        .stacked-insight {
+            position: relative;
+        }
+
+        .stacked-insight::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 0;
+            background: white;
+            border-radius: 8px;
+            z-index: -1;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stacked-insight::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 0;
+            bottom: 0;
+            background: white;
+            border-radius: 8px;
+            z-index: -2;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .card-body {
+            padding: 12px;
+            height: 100%;
+            max-height: 180px;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+        .card-body::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .card-body h4 {
+            margin-top: 0;
+            margin-bottom: 6px;
+            color: #202124;
+            font-size: 14px;
+            letter-spacing: 0.1px;
+        }
+        
+        .card-body p {
+            margin: 0 0 6px 0;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #3c4043;
+        }
+
+        .card-actions {
+            padding: 8px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-actions.hidden {
+            display: none;
+        }
+
+        .quick-reply {
+            padding: 8px 12px;
+            border-radius: 16px;
+            border: 1px solid #ddd;
+            width: 100%;
+        }
+
+        .prebuilt-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .prebuilt-actions button {
+            background: #f1f3f4;
+            border: none;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .prebuilt-actions button:hover {
+            background: #e8eaed;
+        }
+
+        .entity-link {
+            color: #1a73e8;
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
+
+        .left-wireframe-card {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 8px;
+        }
+
+        .left-card-line {
+            height: 8px;
+            background: #f1f3f4;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .left-card-line:last-child {
+            width: 60%;
+            margin-bottom: 0;
+        }
+
+        .main-wireframe-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .main-card-header {
+            height: 16px;
+            background: #f1f3f4;
+        }
+
+        .main-card-content {
+            padding: 12px;
+        }
+
+        .main-card-line {
+            height: 8px;
+            background: #f1f3f4;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .main-card-footer {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-card-button {
+            height: 8px;
+            width: 60px;
+            background: #f1f3f4;
+            border-radius: 4px;
+        }
+
+        .header-stream {
+            display: flex;
+            gap: 16px;
+            overflow-x: hidden;
+            padding: 8px 0;
+        }
+
+        .stream-item {
+            background: white;
+            border-radius: 8px;
+            padding: 8px 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            min-width: 200px;
+            animation: floatIn 0.5s ease-out forwards;
+        }
+
+        @keyframes floatIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stream-title {
+            font-size: 12px;
+            color: #5f6368;
+            margin-bottom: 4px;
+        }
+
+        .stream-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .stream-trend {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .trend-up {
+            color: #34a853;
+        }
+
+        .trend-down {
+            color: #ea4335;
+        }
+
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 200px 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-areas: 
+                    "header"
+                    "main-content";
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+
+            .left-zone {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">Riskill</div>
+                <div class="header-actions">
+                    <input type="text" class="search-bar" placeholder="Search...">
+                    <div class="user-profile">
+                        <div class="avatar"></div>
+                        <span class="username">Joseph Maristela</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="header-zone">
+                <div class="header-stream">
+                    <div class="stream-item">
+                        <div class="stream-title">Revenue (MTD)</div>
+                        <div class="stream-value">$1.24M</div>
+                        <div class="stream-trend trend-up">+12.3% vs. prev. month</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Active Users</div>
+                        <div class="stream-value">24,892</div>
+                        <div class="stream-trend trend-up">+8.7% vs. prev. week</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Conversion Rate</div>
+                        <div class="stream-value">3.8%</div>
+                        <div class="stream-trend trend-up">+0.5% vs. prev. month</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Churn Rate</div>
+                        <div class="stream-value">1.2%</div>
+                        <div class="stream-trend trend-down">-0.3% vs. prev. month</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Support Tickets</div>
+                        <div class="stream-value">127</div>
+                        <div class="stream-trend trend-down">-18% vs. prev. week</div>
+                    </div>
+                </div>
+            </div>
+            <div class="left-zone">
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <!-- Additional cards to ensure vertical space is filled -->
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="front-page-row" style="display: flex; gap: 16px; margin-bottom: 16px; width: 100%; height: auto;">
+                    <div class="front-page-zone" style="max-width: 65%; flex: 1;">
+                        <div class="strategic-narrative">
+                            <h2>Strategic Insight Summary</h2>
+                            <div class="narrative-date">July 16, 2025</div>
+                            <div class="narrative-content personal-greeting" data-preserve-content="true">
+                                <p>Joe, I wanted to check in before your executive team meeting at 2PM. I've synthesized the latest performance data, and there's a compelling story emerging that deserves your attention.</p>
+                                <p>Your strategic pivot is gaining traction. EU SaaS subscriptions increased 42% last week, validating the targeted marketing approach we discussed. More importantly, enterprise retention has improved 27% this quarter – the foundation is strengthening.</p>
+                                <p>The infrastructure upgrade is delivering as promised: 23% faster processing and 42% reduction in API response times. This positions us well for the enterprise security features that 3 of your top prospects specifically requested yesterday.</p>
+                                <p>Looking ahead, I've identified these priorities requiring your attention:</p>
+                                <ul style="margin-top: 8px; margin-bottom: 12px; padding-left: 20px;">
+                                    <li>Enterprise security feature decision needed by Thursday (blocking $2.8M pipeline)</li>
+                                    <li>Q3 budget reallocation proposal ready for your review</li>
+                                    <li>Meeting request from Globex Corp. CEO (potential strategic partnership)</li>
+                                </ul>
+                                <p>The window for market leadership is open, but our analysis suggests it will narrow in the next 90 days as competitors adjust their strategies. I recommend accelerating the enterprise feature roadmap to capitalize on our current momentum.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-zones-container">
+                        <div class="anomalies-zone">
+                            <h3>Anomalies</h3>
+                            <div class="anomaly-item">
+                                <p>Ad spend on SKU-A is <span class="metric-highlight">+37%</span> vs. 7-day avg.</p>
+                                <p class="source">Google Ads</p>
+                            </div>
+                            <div class="anomaly-item">
+                                <p>Support ticket volume from EU region <span class="positive-metric">up 25%</span>.</p>
+                                <p class="source">Zendesk</p>
+                            </div>
+                            <div class="anomaly-item">
+                                <p>New user activation rate <span class="metric-highlight">dropped by 15%</span> in last 24h.</p>
+                                <p class="source">Internal DB</p>
+                            </div>
+                        </div>
+                        <div class="opportunities-zone">
+                            <h3>Opportunities</h3>
+                            <div class="opportunity-item">
+                                <p><span class="positive-metric">+$18K ARR Potential</span></p>
+                                <p>Tier-2 users upgrading trend suggests a targeted nudge campaign could accelerate revenue.</p>
+                            </div>
+                            <div class="opportunity-item">
+                                <p><span class="positive-metric">+8% Conversion Rate</span></p>
+                                <p>A/B test on pricing page shows variant B is outperforming. Recommend rolling out to 100%.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="main-canvas-row">
+                    <div class="main-canvas">
+                        <div class="module-card-container">
+                            <div class="module-card">
+                                <div class="module-name">Cashflow Predictor</div>
+                                <h3 class="module-title">Burn Rate Alert</h3>
+                                <p class="module-insight">Burn rate = <span class="metric">9.2% MoM</span> — variance from forecast = <span class="metric">$24k</span></p>
+                                <div class="correlation">Transaction <span class="correlation-arrow">→</span> Payroll</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Cashflow Predictor</div>
+                                <h3 class="module-title">Revenue Forecast Variance</h3>
+                                <p class="module-insight">Forecasted revenue for Q3 is overstated by <span class="metric">$412k</span> vs actuals; revise burn planning model</p>
+                                <div class="correlation">Forecast <span class="correlation-arrow">→</span> Transaction</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Churn Radar</div>
+                                <h3 class="module-title">Active Ticket Churn Risk</h3>
+                                <p class="module-insight"><span class="metric">22 customers</span> (2.3 % MRR) have <span class="metric">23 open P1 tickets</span>—historically 41% churn within 30 days</p>
+                                <div class="correlation">Subscription <span class="correlation-arrow">→</span> Ticket</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Churn Radar</div>
+                                <h3 class="module-title">CSAT Detractor Alert</h3>
+                                <p class="module-insight">Customers scoring CSAT ≤ 2 last week have <span class="metric">37%</span> predicted churn—schedule outreach</p>
+                                <div class="correlation">CSAT <span class="correlation-arrow">→</span> Churn</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Churn Radar</div>
+                                <h3 class="module-title">Mid-Tier Segment Churn</h3>
+                                <p class="module-insight">Mid-tier users in the 'High Touch' segment are <span class="metric">3× more likely</span> to churn—trigger outreach</p>
+                                <div class="correlation">Segment <span class="correlation-arrow">→</span> Churn</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Cost Watchtower</div>
+                                <h3 class="module-title">Labor Efficiency Alert</h3>
+                                <p class="module-insight">Support labor cost hit <span class="metric">42%</span> of gross profit yesterday (norm 29%); investigate shift scheduling</p>
+                                <div class="correlation">Timesheet <span class="correlation-arrow">→</span> Transaction</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Efficiency Lens</div>
+                                <h3 class="module-title">SLA Breach Alert</h3>
+                                <p class="module-insight">Pick-pack SLA breach in DC-2, OT hours ↑ while order volume flat</p>
+                                <div class="correlation">Order <span class="correlation-arrow">→</span> Timesheet</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Escalation Radar</div>
+                                <h3 class="module-title">Post-Delivery Issues</h3>
+                                <p class="module-insight">Customer issues per 1k shipments spiked to <span class="metric">14</span> (2.3× baseline) on Carrier XYZ route</p>
+                                <div class="correlation">Shipment <span class="correlation-arrow">→</span> Ticket</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Expansion Engine</div>
+                                <h3 class="module-title">Usage Threshold Alert</h3>
+                                <p class="module-insight"><span class="metric">23 accounts</span> hit usage threshold for Tier-2 — nudge campaigns suggested</p>
+                                <div class="correlation">Subscription <span class="correlation-arrow">→</span> Event <span class="correlation-arrow">→</span> Account</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Growth Pulse</div>
+                                <h3 class="module-title">Feature Usage Expansion</h3>
+                                <p class="module-insight">Accounts that tried Feature X 5+ times upgraded <span class="metric">18%</span> more—nudge 47 eligible accounts</p>
+                                <div class="correlation">Event <span class="correlation-arrow">→</span> Subscription</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Marketing ROI Lens</div>
+                                <h3 class="module-title">ROAS Alert</h3>
+                                <p class="module-insight">ROAS for Google Ads fell <span class="metric">27%</span> week-over-week, pause Campaign ID 123 to stem $1.7k overspend</p>
+                                <div class="correlation">Transaction <span class="correlation-arrow">→</span> AdSpend</div>
+                            </div>
+                            
+                            <div class="module-card">
+                                <div class="module-name">Revenue Guard</div>
+                                <h3 class="module-title">API Error Alert</h3>
+                                <p class="module-insight">Revenue dip may be false. Stripe sync paused 3 h ago (401 error). Re-authenticate to confirm numbers</p>
+                                <div class="correlation">APIError <span class="correlation-arrow">→</span> Any Biz KPI</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Include Anime.js and interaction scripts -->
+    <script src="anime.min.js"></script>
+    <script src="stack-interaction.js"></script>
+    <script src="responsive-cards.js"></script>
+    <link rel="stylesheet" href="strategic-narrative-enhancements.css">
+    <link rel="stylesheet" href="module-cards.css">
+    <script src="strategic-narrative.js"></script>
+    <script src="strategic-narrative-interactions.js"></script>
+    <script src="masonry-layout.js"></script>
+    <script src="float-animation.js"></script>
+    <script src="left-card-animation.js"></script>
+    <script src="main-canvas-animation.js"></script>
+    <script src="revenue-metrics.js"></script>
+    <script src="operational-efficiency.js"></script>
+    <script src="churn-metrics.js"></script>
+    <script src="marketing-roi.js"></script>
+    <script src="growth-opportunities.js"></script>
+    <script src="copilot-integration.js"></script>
+    <script src="perplexity-card-interaction.js"></script>
+    <script src="card-animations.js"></script>
+    <script src="entity-linking.js"></script>
+    <script src="entity-drill-animations.js"></script>
+    <script src="test-animations.js"></script>
+    <script src="strategic-narrative.js"></script>
+    <script>
+        // Ensure the strategic narrative is updated when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Strategic narrative update disabled to preserve custom content
+            console.log('Strategic narrative forced update disabled');
+        });
+    </script>
+    <script src="copilot-chat.js"></script>
+    
+    <!-- Copilot Chat Panel -->
+    <div class="copilot-chat-panel">
+        <div class="copilot-header">
+            <button class="close-copilot" aria-label="Close">×</button>
+        </div>
+        <div class="copilot-messages">
+            <!-- Card will be inserted here when clicked -->
+            <div class="message copilot-message">
+                <p>I can help you analyze this insight. What would you like to know?</p>
+            </div>
+        </div>
+        <div class="copilot-input-area">
+            <input type="text" class="copilot-input" placeholder="" />
+        </div>
+    </div>
+</body>
+</html>

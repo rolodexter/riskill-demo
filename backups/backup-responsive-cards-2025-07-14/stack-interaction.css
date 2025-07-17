@@ -1,0 +1,166 @@
+/* Stack Management Styles */
+
+/* Stack badge styles */
+.stack-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: linear-gradient(135deg, #0078d4, #106ebe);
+    color: white;
+    border-radius: 12px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+    z-index: 10;
+    transition: transform 0.2s ease;
+}
+
+.card-stack-container:hover .stack-badge {
+    transform: scale(1.1);
+}
+
+/* Visual stack depth indicators */
+.card-stack-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.card-stack-container::before,
+.card-stack-container::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    z-index: -1;
+}
+
+.card-stack-container::before {
+    top: -4px;
+    left: 4px;
+    right: -4px;
+    bottom: 4px;
+}
+
+.card-stack-container::after {
+    top: -8px;
+    left: 8px;
+    right: -8px;
+    bottom: 8px;
+}
+
+/* Stack overlay styles */
+.stack-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    opacity: 0;
+    font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+}
+
+.overlay-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    box-shadow: inset 0 0 100px rgba(0, 120, 212, 0.1);
+}
+
+/* Overlay title */
+.overlay-title {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+    z-index: 11;
+}
+
+.card-grid {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    gap: 24px;
+    padding: 80px 40px;
+    height: 100%;
+    align-content: center;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+/* Responsive grid layouts */
+.card-grid.compact {
+    grid-template-columns: repeat(2, 280px);
+    max-width: 600px;
+}
+
+.card-grid.full {
+    grid-template-columns: repeat(3, 280px);
+    max-width: 900px;
+}
+
+.card-grid .stacked-card {
+    transform: scale(0.9);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin: 0 !important;
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.05),
+        0 8px 16px rgba(0, 0, 0, 0.05),
+        0 16px 32px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.9));
+}
+
+.card-grid .stacked-card:hover {
+    transform: scale(0.95) translateY(-5px);
+    box-shadow: 
+        0 8px 16px rgba(0, 0, 0, 0.08),
+        0 16px 32px rgba(0, 0, 0, 0.06),
+        0 24px 48px rgba(0, 0, 0, 0.04);
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Animation styles */
+.stacked-card.selected {
+    animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}

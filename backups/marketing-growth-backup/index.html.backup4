@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riskill Demo Clean</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            background-color: #f5f5f5;
+            overflow: hidden;
+        }
+
+        /* Ensure no scrollbars */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        * {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-areas: 
+                "header header header"
+                "left-zone main-canvas right-zone"
+                "bottom-zone bottom-zone bottom-zone";
+            grid-template-columns: 250px 1fr 300px;
+            grid-template-rows: 120px 1fr 180px;
+            height: 100vh;
+            width: 100vw;
+            gap: 8px;
+            padding: 10px;
+        }
+
+        .top-zone {
+            grid-area: header;
+            background: linear-gradient(135deg, #ffffff, #f0f6ff, #e6f0ff);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 24px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #0078d4;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.02),
+                0 4px 8px rgba(0, 0, 0, 0.03),
+                0 8px 16px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .top-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.8), rgba(255,255,255,0));
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            width: 100%;
+            overflow-x: auto;
+            padding: 16px 0 8px 0;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 120, 212, 0.2) transparent;
+        }
+        
+        /* Subtle Card Stack Styles */
+        .card-stack-container {
+            position: relative;
+            height: 90px;
+            width: 100%;
+        }
+        
+        .stacked-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stacked-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            pointer-events: none;
+            border-radius: 8px;
+        }
+        
+        .stacked-card:nth-child(1) {
+            z-index: 5;
+        }
+        
+        .stacked-card:nth-child(2) {
+            transform: translateY(-2px) translateX(1px);
+            z-index: 4;
+            opacity: 0.97;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+        
+        .stacked-card:nth-child(3) {
+            transform: translateY(-4px) translateX(2px);
+            z-index: 3;
+            opacity: 0.94;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+        }
+        
+        .stacked-card:nth-child(4) {
+            transform: translateY(-6px) translateX(3px);
+            z-index: 2;
+            opacity: 0.91;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.01);
+        }
+        
+        .stacked-card:nth-child(5) {
+            transform: translateY(-8px) translateX(4px);
+            z-index: 1;
+            opacity: 0.88;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.01);
+        }
+        
+        .card-container::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .card-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .card-container::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 120, 212, 0.2);
+            border-radius: 4px;
+        }
+        
+        .wireframe-card {
+            height: 90px;
+            width: 100%;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+            box-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.02),
+                0 2px 4px rgba(0, 0, 0, 0.04),
+                0 4px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wireframe-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            pointer-events: none;
+        }
+        
+        .wireframe-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.03),
+                0 4px 8px rgba(0, 0, 0, 0.05),
+                0 8px 16px rgba(0, 0, 0, 0.06);
+        }
+        
+        .card-line {
+            height: 8px;
+            background: linear-gradient(90deg, rgba(0, 120, 212, 0.12), rgba(0, 120, 212, 0.08));
+            border-radius: 4px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .card-line:nth-child(2) {
+            width: 85%;
+        }
+        
+        .card-line:last-child {
+            width: 65%;
+            margin-bottom: 0;
+        }
+        
+        .wireframe-card:hover .card-line {
+            background: linear-gradient(90deg, rgba(0, 120, 212, 0.15), rgba(0, 120, 212, 0.1));
+        }
+        
+        @media (max-width: 768px) {
+            .card-container {
+                justify-content: flex-start;
+                padding-right: 15px;
+            }
+            
+            .wireframe-card {
+                min-width: 80px;
+            }
+        }
+
+        .left-zone {
+            grid-area: left-zone;
+            background: linear-gradient(135deg, #ffffff, #f5fbf6, #eef8ef);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #43a047;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.02),
+                0 4px 8px rgba(0, 0, 0, 0.03),
+                0 8px 16px rgba(0, 0, 0, 0.04);
+            overflow-y: auto;
+            position: relative;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+        .left-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.8), rgba(255,255,255,0));
+        }
+        
+        .left-zone::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
+        
+        .left-card-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            padding: 4px 0;
+        }
+        
+        .left-wireframe-card {
+            height: 120px;
+            width: 100%;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+            box-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.02),
+                0 2px 4px rgba(0, 0, 0, 0.04),
+                0 4px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .left-wireframe-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            pointer-events: none;
+        }
+        
+        .left-wireframe-card:hover {
+            transform: translateX(2px);
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.03),
+                0 4px 8px rgba(0, 0, 0, 0.05),
+                0 8px 16px rgba(0, 0, 0, 0.06);
+        }
+        
+        .left-card-line {
+            height: 8px;
+            background: linear-gradient(90deg, rgba(67, 160, 71, 0.12), rgba(67, 160, 71, 0.08));
+            border-radius: 4px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .left-card-line:nth-child(1) {
+            width: 100%;
+        }
+        
+        .left-card-line:last-child {
+            width: 60%;
+            margin-bottom: 0;
+        }
+        
+        .left-wireframe-card:hover .left-card-line {
+            background: linear-gradient(90deg, rgba(67, 160, 71, 0.15), rgba(67, 160, 71, 0.1));
+        }
+
+        .main-canvas {
+            grid-area: main-canvas;
+            background: linear-gradient(135deg, #ffffff, #fffaf2, #fff7eb);
+            border-radius: 10px;
+            padding: 24px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #ff8c00;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.02),
+                0 4px 8px rgba(0, 0, 0, 0.03),
+                0 8px 16px rgba(0, 0, 0, 0.04);
+            overflow-y: auto;
+            position: relative;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+        .main-canvas::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
+        
+        .main-card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 450px), 1fr));
+            gap: 24px;
+            width: 100%;
+            padding: 4px 0;
+            max-width: 100%;
+        }
+        
+        .main-wireframe-card {
+            height: 200px;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.02),
+                0 2px 4px rgba(0, 0, 0, 0.04),
+                0 4px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .main-wireframe-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            pointer-events: none;
+        }
+        
+        .main-wireframe-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 4px 8px rgba(0, 0, 0, 0.03),
+                0 8px 16px rgba(0, 0, 0, 0.05),
+                0 16px 24px rgba(0, 0, 0, 0.06);
+        }
+        
+        .main-card-header {
+            height: 14px;
+            background: linear-gradient(90deg, rgba(255, 140, 0, 0.15), rgba(255, 140, 0, 0.08));
+            border-radius: 4px;
+            width: 70%;
+            margin-bottom: 20px;
+            transition: all 0.2s ease;
+        }
+        
+        .main-card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .main-card-line {
+            height: 8px;
+            background: linear-gradient(90deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.05));
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .main-wireframe-card:hover .main-card-line,
+        .main-wireframe-card:hover .main-card-header,
+        .main-wireframe-card:hover .main-card-button {
+            background: linear-gradient(90deg, rgba(255, 140, 0, 0.18), rgba(255, 140, 0, 0.1));
+        }
+        
+        .main-card-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .main-card-button {
+            height: 10px;
+            width: 60px;
+            background: linear-gradient(90deg, rgba(255, 140, 0, 0.15), rgba(255, 140, 0, 0.08));
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .main-card-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .right-zone {
+            grid-area: right-zone;
+            background: linear-gradient(135deg, #ffffff, #faeaea);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 500;
+            color: #e53935;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        .bottom-zone {
+            grid-area: bottom-zone;
+            background: linear-gradient(135deg, #ffffff, #f5ebfc);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 500;
+            color: #9c27b0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="top-zone">
+            <div class="card-container">
+                <div class="card-stack-container">
+                    <div class="stacked-card">
+                        <div class="card-line"></div>
+                        <div class="card-line"></div>
+                        <div class="card-line"></div>
+                    </div>
+                    <div class="stacked-card">
+                        <div class="card-line"></div>
+                        <div class="card-line"></div>
+                        <div class="card-line"></div>
+                    </div>
+                    <div class="stacked-card">
+                        <div class="card-line"></div>
+                        <div class="card-line"></div>
+                        <div class="card-line"></div>
+                    </div>
+                    <div class="stacked-card">
+                        <div class="card-line"></div>
+                        <div class="card-line"></div>
+                        <div class="card-line"></div>
+                    </div>
+                    <div class="stacked-card">
+                        <div class="card-line"></div>
+                        <div class="card-line"></div>
+                        <div class="card-line"></div>
+                    </div>
+                </div>
+                <div class="wireframe-card">
+                    <div class="card-line"></div>
+                    <div class="card-line"></div>
+                    <div class="card-line"></div>
+                </div>
+                <div class="wireframe-card">
+                    <div class="card-line"></div>
+                    <div class="card-line"></div>
+                    <div class="card-line"></div>
+                </div>
+                <div class="wireframe-card">
+                    <div class="card-line"></div>
+                    <div class="card-line"></div>
+                    <div class="card-line"></div>
+                </div>
+                <div class="wireframe-card">
+                    <div class="card-line"></div>
+                    <div class="card-line"></div>
+                    <div class="card-line"></div>
+                </div>
+            </div>
+        </div>
+        <div class="left-zone">
+            <div class="left-card-container">
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+                <div class="left-wireframe-card">
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                    <div class="left-card-line"></div>
+                </div>
+            </div>
+        </div>
+        <div class="main-canvas">
+            <div class="main-card-container">
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+                <div class="main-wireframe-card">
+                    <div class="main-card-header"></div>
+                    <div class="main-card-content">
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                        <div class="main-card-line"></div>
+                    </div>
+                    <div class="main-card-footer">
+                        <div class="main-card-button"></div>
+                        <div class="main-card-button"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right-zone">RIGHT ZONE</div>
+        <div class="bottom-zone">BOTTOM ZONE</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,452 @@
+/* Marketing ROI Styles */
+
+/* Marketing ROI card styling */
+#topStack4 .stacked-card:first-child {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92));
+    transition: all 0.2s cubic-bezier(0, 0.9, 0.1, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Header styling */
+.marketing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: clamp(8px, 3%, 16px);
+    flex-shrink: 0;
+}
+
+.marketing-header h3 {
+    font-size: clamp(12px, 3vw, 14px);
+    font-weight: 600;
+    color: #1976d2;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+}
+
+/* Main KPI styling */
+.marketing-kpi-container {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: clamp(10px, 4%, 16px);
+    flex-wrap: wrap;
+}
+
+.marketing-kpi {
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 700;
+    color: #000;
+    margin-right: clamp(6px, 3%, 12px);
+    transition: color 0.5s ease;
+    line-height: 1.1;
+    flex-shrink: 0;
+}
+
+.marketing-trend {
+    display: flex;
+    align-items: center;
+    font-size: clamp(11px, 3vw, 14px);
+    font-weight: 500;
+    height: fit-content;
+}
+
+/* Status indicator styling */
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-green {
+    background-color: #2e7d32;
+}
+
+.status-red {
+    background-color: #c62828;
+}
+
+.status-yellow {
+    background-color: #ff9800;
+}
+
+/* Secondary metrics styling */
+.marketing-secondary-metrics {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: clamp(8px, 3%, 12px);
+    flex-shrink: 0;
+}
+
+.marketing-secondary-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.secondary-label {
+    font-size: clamp(10px, 2.5vw, 12px);
+    color: #666;
+    margin-bottom: clamp(2px, 1%, 4px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.secondary-value {
+    font-size: clamp(12px, 3vw, 14px);
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Last update styling */
+.marketing-last-update {
+    font-size: clamp(8px, 2vw, 10px);
+    color: #999;
+    text-align: right;
+    font-style: italic;
+    flex-shrink: 0;
+    margin-top: auto;
+    padding-top: clamp(4px, 2%, 8px);
+}
+
+/* Marketing detail card styles */
+.marketing-detail-card {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92));
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.marketing-card-title {
+    font-size: clamp(12px, 2.5vw, 14px);
+    font-weight: 600;
+    color: #1976d2;
+    margin: 0 0 clamp(8px, 3%, 12px) 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.marketing-card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* Marketing insight box */
+.marketing-insight-box {
+    display: flex;
+    align-items: center;
+    background-color: rgba(25, 118, 210, 0.05);
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+.marketing-insight-box.warning {
+    background-color: rgba(229, 57, 53, 0.05);
+}
+
+.insight-icon {
+    margin-right: 8px;
+    font-size: clamp(12px, 3vw, 14px);
+}
+
+.insight-text {
+    font-size: clamp(9px, 2vw, 11px);
+    color: #666;
+    line-height: 1.3;
+}
+
+/* Marketing metrics container */
+.marketing-metrics-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.marketing-metric {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 4px;
+}
+
+.metric-label {
+    font-size: clamp(9px, 2vw, 11px);
+    color: #666;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.metric-value {
+    font-size: clamp(14px, 3.5vw, 18px);
+    font-weight: 600;
+    color: #333;
+}
+
+.metric-trend {
+    font-size: clamp(9px, 2vw, 11px);
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.positive {
+    color: #2e7d32;
+}
+
+.negative {
+    color: #c62828;
+}
+
+/* Campaign performance */
+.campaign-performance {
+    margin-top: auto;
+}
+
+.performance-label {
+    font-size: clamp(10px, 2.5vw, 12px);
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.performance-table {
+    width: 100%;
+    font-size: clamp(9px, 2vw, 11px);
+    border-collapse: collapse;
+}
+
+.performance-table th {
+    text-align: left;
+    color: #666;
+    font-weight: 500;
+    padding: 4px;
+}
+
+.performance-table td {
+    padding: 4px;
+    color: #333;
+}
+
+.performance-table tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.performance-table .highlight {
+    color: #c62828;
+    font-weight: 600;
+}
+
+/* Channel distribution */
+.channel-distribution {
+    margin-bottom: 16px;
+}
+
+.distribution-bars {
+    display: flex;
+    justify-content: space-around;
+    height: 60px;
+    align-items: flex-end;
+}
+
+.distribution-bar {
+    width: 18%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bar-fill {
+    width: 100%;
+    background-color: #1976d2;
+    border-radius: 2px 2px 0 0;
+}
+
+.distribution-bar.highlight .bar-fill {
+    background-color: #2e7d32;
+}
+
+.distribution-bar.warning .bar-fill {
+    background-color: #c62828;
+}
+
+.bar-label {
+    font-size: clamp(9px, 2vw, 11px);
+    color: #666;
+    margin-top: 4px;
+    text-align: center;
+}
+
+.bar-value {
+    font-size: clamp(8px, 2vw, 10px);
+    color: #666;
+    margin-bottom: 2px;
+}
+
+/* CAC trend chart */
+.cac-trend-container {
+    margin-bottom: 16px;
+}
+
+.cac-trend-chart {
+    height: 80px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.cac-trend-point {
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cac-trend-line {
+    height: 2px;
+    background-color: #1976d2;
+    width: 100%;
+    position: relative;
+    top: 1px;
+}
+
+.cac-trend-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #1976d2;
+    margin-bottom: -3px;
+}
+
+.cac-trend-point.highlight .cac-trend-dot {
+    background-color: #c62828;
+    width: 8px;
+    height: 8px;
+    margin-bottom: -4px;
+}
+
+.cac-trend-label {
+    font-size: clamp(8px, 2vw, 10px);
+    color: #666;
+    margin-top: 4px;
+}
+
+/* ROAS comparison */
+.roas-comparison {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.roas-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.roas-value {
+    font-size: clamp(16px, 4vw, 20px);
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.roas-label {
+    font-size: clamp(9px, 2vw, 11px);
+    color: #666;
+    text-align: center;
+}
+
+.roas-trend {
+    font-size: clamp(9px, 2vw, 11px);
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+/* Conversion funnel */
+.conversion-funnel {
+    margin-bottom: 16px;
+}
+
+.funnel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.funnel-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.funnel-bar {
+    height: 20px;
+    background-color: #1976d2;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: clamp(9px, 2vw, 11px);
+    font-weight: 500;
+}
+
+.funnel-label {
+    font-size: clamp(9px, 2vw, 11px);
+    color: #666;
+    margin-top: 2px;
+}
+
+/* Default content styles */
+.default-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.card-line {
+    height: 8px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+/* Animation for value changes */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.value-change {
+    animation: pulse 0.5s ease;
+}
+
+/* Update indicator */
+.update-indicator {
+    font-size: clamp(8px, 2vw, 10px);
+    color: #999;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}

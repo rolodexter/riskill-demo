@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riskill Demo</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        /* Custom scrollbar styling to hide scrollbars but maintain functionality */
+        * {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+        *::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 6px 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0078d4;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .search-bar {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            width: 250px;
+            background-color: white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .username {
+            font-size: 13px;
+            color: #555;
+            font-weight: 400;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #0078d4;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-areas: 
+                "header header"
+                "left-zone main-content";
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: 120px auto;
+            flex: 1;
+            gap: 6px;
+            padding: 8px;
+        }
+        
+        .left-zone {
+            grid-area: left-zone;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: linear-gradient(145deg, #f8f9fc 0%, #edf1f7 100%);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 100%;
+            min-height: 400px;
+        }
+        
+        .left-wireframe-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            padding: 16px;
+            transition: all 0.3s ease;
+            min-height: 100px;
+        }
+        
+        .left-wireframe-card .wireframe-card-header {
+            height: 20px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+        
+        .left-wireframe-card .wireframe-card-content {
+            height: 60px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        
+        /* New Left Zone Card Styles */
+        .left-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            padding: 12px;
+            transition: all 0.3s ease;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Settings Card Gradient */
+        .settings-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
+        }
+        
+        /* Control Card Gradient */
+        .control-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f4f8f0 100%);
+        }
+        
+        /* Filters Card Gradient */
+        .filters-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f4f0 100%);
+        }
+        
+        /* Preferences Card Gradient */
+        .preferences-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f4f0f8 100%);
+        }
+        
+        /* Drag and drop styles */
+        .card-ghost {
+            opacity: 0.6;
+            background: #f5f5f5 !important;
+        }
+        
+        .card-chosen {
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        
+        .card-drag {
+            cursor: grabbing;
+        }
+        
+        .left-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .left-card .card-header {
+            font-size: 14px;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: #555;
+            letter-spacing: 0.3px;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
+            padding: 4px 6px;
+            border-radius: 4px;
+        }
+        
+        /* Remove background for Adam header for a cleaner look */
+        .adam-header {
+            background: none !important;
+            padding: 0 !important;
+        }
+        
+        .left-card .card-content {
+            flex: 1;
+            border-radius: 6px;
+            min-height: 70px;
+        }
+        
+        /* Compact content style for Adam card */
+        .compact-content {
+            padding: 0;
+        }
+        
+        .compact-content .setting-item {
+            margin-bottom: 6px;
+        }
+        
+        .compact-content .integration-section {
+            margin-top: 8px;
+        }
+        
+        /* Setting and Control Items */
+        .setting-item, .control-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+        
+        .setting-item:last-child, .control-item:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-label, .control-label {
+            color: #777;
+            font-size: 12px;
+            font-weight: 300;
+        }
+        
+        .setting-value, .control-value {
+            color: #444;
+            font-weight: 400;
+            font-size: 12px;
+        }
+        
+        .main-content {
+            grid-area: main-content;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .front-page-row {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .main-canvas-row {
+            width: 100%;
+            flex: 1;
+        }
+
+        /* Removed duplicate CSS for anomalies and opportunities zones */
+
+        /* Removed duplicate CSS for anomaly-item and opportunity-item */
+        
+        .strategic-narrative {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+            max-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .narrative-date {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        
+        .narrative-content {
+            line-height: 1.6;
+            color: #333;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .narrative-content p {
+            margin-bottom: 16px;
+        }
+
+        .metric-highlight {
+            color: #ea4335;
+            font-weight: 600;
+        }
+
+        .positive-metric {
+            color: #34a853;
+            font-weight: 600;
+        }
+
+        .source {
+            font-size: 12px;
+            color: #5f6368;
+            margin-top: 4px;
+        }
+        
+        /* Copilot Chat Panel Styles */
+        .copilot-chat-panel {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            right: -380px; /* Start off-screen */
+            width: 360px;
+            height: 500px;
+            max-height: 80vh;
+            background: linear-gradient(145deg, #fbfdff, #f0f5fc);
+            border-radius: 16px 0 0 16px;
+            box-shadow: 
+                -2px 0 20px rgba(0, 0, 0, 0.04),
+                -1px 0 5px rgba(0, 0, 0, 0.02),
+                inset 1px 0 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            opacity: 0; /* Start invisible for fade-in effect */
+            backdrop-filter: blur(10px);
+        }
+        
+        .copilot-chat-panel.active {
+            right: 0;
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .copilot-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            background: linear-gradient(120deg, rgba(255,255,255,0.95), rgba(252,254,255,0.98));
+            border-radius: 16px 0 0 0;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.01);
+            position: relative;
+        }
+        
+        /* Removed h3 styling for minimalist design */
+        
+        .close-copilot {
+            background: rgba(0, 0, 0, 0.03);
+            border: none;
+            cursor: pointer;
+            color: #5f6368;
+            font-size: 16px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .close-copilot:hover {
+            background-color: rgba(0, 0, 0, 0.06);
+            color: #202124;
+            transform: scale(1.05);
+        }
+        
+        .close-copilot:active {
+            transform: scale(0.95);
+        }
+        
+        .close-copilot::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        
+        .close-copilot:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .copilot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+            background: linear-gradient(180deg, rgba(250,252,255,0.8), rgba(246,248,252,0.9));
+            position: relative;
+        }
+        
+        .copilot-messages::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(to top, rgba(246,248,252,0.9), rgba(246,248,252,0));
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            max-width: 85%;
+            position: relative;
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+        }
+        
+        .message:hover {
+            transform: translateY(-1px);
+        }
+        
+        .user-message {
+            margin-left: auto;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 12px 16px;
+            border-radius: 16px 16px 2px 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02);
+            color: #1a2b42;
+        }
+        
+        .copilot-message {
+            background: linear-gradient(135deg, #ffffff, #f5f7fa);
+            padding: 12px 16px;
+            border-radius: 16px 16px 16px 2px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 2px 8px rgba(0, 0, 0, 0.01);
+            color: #1a2b42;
+            position: relative;
+        }
+        
+        .copilot-message::before {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #4285f4, #34a853);
+            border-radius: 3px;
+            opacity: 0.5;
+        }
+        
+        .card-in-chat {
+            width: 100%;
+            margin-bottom: 16px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            padding: 12px;
+        }
+        
+        .copilot-input-area {
+            padding: 18px 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.02);
+            display: flex;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(252,254,255,0.98), rgba(248,250,254,0.99));
+            border-radius: 0 0 0 16px;
+            position: relative;
+            box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.01);
+        }
+        
+        .copilot-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 28px;
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+        }
+        
+        .copilot-input:focus {
+            border-color: rgba(66, 133, 244, 0.5);
+            box-shadow: 0 0 0 1px rgba(66, 133, 244, 0.2), 0 2px 4px rgba(0, 0, 0, 0.02);
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+        }
+        
+        .send-button {
+            background: linear-gradient(135deg, #4285f4, #0d47a1);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin-left: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .send-button:hover {
+            transform: translateY(-1px) scale(1.05);
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        .send-button:active {
+            transform: translateY(1px) scale(0.98);
+        }
+        
+        .send-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        
+        .send-button:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .header-zone {
+            grid-area: header;
+            background: linear-gradient(to right, #ffffff, #f5f5f5);
+            border-radius: 8px;
+            padding: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .header-stream {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 0 4px;
+        }
+        
+        .stream-item {
+            padding: 6px;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .stream-title {
+            font-size: 12px;
+            color: #5f6368;
+            margin-bottom: 2px;
+        }
+        
+        .stream-value {
+            font-size: 18px;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 2px;
+        }
+        
+        .stream-trend {
+            font-size: 11px;
+            font-weight: 400;
+        }
+        
+        .trend-up {
+            color: #188038;
+        }
+        
+        .trend-down {
+            color: #d93025;
+        }
+
+        .left-zone {
+            grid-area: left-zone;
+            background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+        }
+
+        .front-page-zone {
+            background: linear-gradient(to bottom, #ffffff, #f8f8f8);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Right zone styling for enterprise elegance */
+        .right-zones-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            height: 100%;
+            flex: 0 0 35%;
+            max-width: 35%;
+        }
+        
+        .anomalies-zone, .opportunities-zone {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+        
+        /* Removed left trim/highlight from zones as requested */
+        
+        .anomalies-zone h3, .opportunities-zone h3 {
+            margin: 0 0 8px 0;
+            font-size: 15px;
+            font-weight: 500;
+            color: #202124;
+            letter-spacing: 0.2px;
+            padding-left: 8px;
+        }
+        
+        .anomaly-item, .opportunity-item {
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin-bottom: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.2s ease-out;
+        }
+        
+        .anomaly-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f8ff 70%, #eef2ff 100%);
+        }
+        
+        .opportunity-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f5fff8 70%, #eefff2 100%);
+        }
+        
+        .anomaly-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(66, 133, 244, 0.08);
+            background: linear-gradient(135deg, #ffffff 0%, #f0f5ff 70%, #e8eeff 100%);
+        }
+        
+        .opportunity-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(52, 168, 83, 0.08);
+            background: linear-gradient(135deg, #ffffff 0%, #f0fff5 70%, #e8ffed 100%);
+        }
+        
+        .anomaly-item p, .opportunity-item p {
+            margin: 0 0 3px 0;
+            font-size: 12px;
+            line-height: 1.35;
+            color: #3c4043;
+            letter-spacing: 0.1px;
+        }
+        
+        .source {
+            color: #5f6368;
+            font-size: 10px;
+            margin: 0;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        
+        .metric-highlight {
+            color: #d93025;
+            font-weight: 500;
+        }
+        
+        .positive-metric {
+            color: #188038;
+            font-weight: 500;
+        }
+
+        .strategic-narrative h2 {
+            margin-top: 0;
+            color: #202124;
+            font-weight: 500;
+        }
+
+        .narrative-content {
+            line-height: 1.6;
+        }
+
+        .main-canvas {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+        }
+
+        .main-card-container {
+            position: relative;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            padding-bottom: 32px;
+        }
+
+        .card-reference {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04), 0 0 1px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #f0f4ff, #e6f0ff);
+            padding: 14px 16px;
+            font-size: 0.9em;
+            position: relative;
+            transition: all 0.2s ease-out;
+            overflow: hidden;
+        }
+        
+        .card-reference::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #4285f4, #0d47a1);
+        }
+        
+        .card-reference:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-weight: 500;
+            color: #1a2b42;
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.2px;
+        }
+        
+        .card-title::before {
+            content: '📄';
+            margin-right: 10px;
+            font-size: 14px;
+            background: linear-gradient(135deg, #4285f4, #0d47a1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            max-height: 180px;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
+        .stacked-insight {
+            position: relative;
+        }
+
+        .stacked-insight::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 0;
+            background: white;
+            border-radius: 8px;
+            z-index: -1;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stacked-insight::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 0;
+            bottom: 0;
+            background: white;
+            border-radius: 8px;
+            z-index: -2;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .card-body {
+            padding: 12px;
+            height: 100%;
+            max-height: 180px;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+        .card-body::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .card-body h4 {
+            margin-top: 0;
+            margin-bottom: 6px;
+            color: #202124;
+            font-size: 14px;
+            letter-spacing: 0.1px;
+        }
+        
+        .card-body p {
+            margin: 0 0 6px 0;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #3c4043;
+        }
+
+        .card-actions {
+            padding: 8px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-actions.hidden {
+            display: none;
+        }
+
+        .quick-reply {
+            padding: 8px 12px;
+            border-radius: 16px;
+            border: 1px solid #ddd;
+            width: 100%;
+        }
+
+        .prebuilt-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .prebuilt-actions button {
+            background: #f1f3f4;
+            border: none;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .prebuilt-actions button:hover {
+            background: #e8eaed;
+        }
+
+        .entity-link {
+            color: #1a73e8;
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
+
+        .left-wireframe-card {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 8px;
+        }
+
+        .left-card-line {
+            height: 8px;
+            background: #f1f3f4;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .left-card-line:last-child {
+            width: 60%;
+            margin-bottom: 0;
+        }
+
+        .main-wireframe-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .main-card-header {
+            height: 16px;
+            background: #f1f3f4;
+        }
+
+        .left-card .card-content {
+            padding: 12px;
+        }
+        
+        /* Adam Card Styles */
+        .adam-card .card-header {
+            background: linear-gradient(135deg, #f5f8ff, #e8eeff);
+        }
+        
+        .adam-card .card-content {
+            padding: 8px 10px;
+        }
+        
+        .adam-card .setting-item {
+            margin-bottom: 4px;
+        }
+        
+        .adam-card .setting-label {
+            font-size: 11px;
+        }
+        
+        .adam-card .setting-value {
+            font-size: 11px;
+        }
+        
+        .integration-section {
+            margin-top: 6px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding-top: 6px;
+        }
+        
+        .integration-header {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #667799;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .clickable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .clickable:hover {
+            opacity: 0.8;
+        }
+        
+        .integration-icon-small {
+            font-size: 10px;
+            color: #4488cc;
+            font-weight: bold;
+        }
+        
+        .integration-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        
+        .integration-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            background-color: #f0f4ff;
+            margin-right: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: #4488cc;
+        }
+        
+        .integration-name {
+            font-size: 10px;
+            color: #445566;
+        }
+        
+        .atom-recommendations {
+            margin-top: 10px;
+        }
+        
+        .atom-rec-header {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #667799;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        .atom-rec-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 5px;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+        
+        .atom-rec-bullet {
+            color: #4488cc;
+            margin-right: 4px;
+            font-weight: bold;
+        }
+        
+        .atom-rec-text {
+            color: #445566;
+            flex: 1;
+        }
+
+        .main-card-content {
+            padding: 12px;
+        }
+
+        .main-card-line {
+            height: 8px;
+            background: #f1f3f4;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .main-card-footer {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-card-button {
+            height: 8px;
+            width: 60px;
+            background: #f1f3f4;
+            border-radius: 4px;
+        }
+
+        .header-stream {
+            display: flex;
+            gap: 12px;
+            overflow-x: hidden;
+            padding: 4px 0;
+        }
+
+        .stream-item {
+            background: white;
+            border-radius: 8px;
+            padding: 6px 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            min-width: 200px;
+            animation: floatIn 0.5s ease-out forwards;
+        }
+
+        @keyframes floatIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stream-title {
+            font-size: 12px;
+            color: #5f6368;
+            margin-bottom: 4px;
+        }
+
+        .stream-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .stream-trend {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .trend-up {
+            color: #34a853;
+        }
+
+        .trend-down {
+            color: #ea4335;
+        }
+
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 200px 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-areas: 
+                    "header"
+                    "main-content";
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+
+            .left-zone {
+                display: none;
+            }
+        }
+        
+        /* Module Cards - Enterprise Elegance Styling with Color Coding */
+        .module-card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+            width: 100%;
+        }
+        
+        /* Base card styling */
+        .module-card {
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Card type styling - neutral/default (blue) */
+        .card-neutral {
+            background: linear-gradient(135deg, #ffffff 0%, #f9fbff 80%, #f5f8ff 100%);
+        }
+        
+        /* Card type styling - urgent/critical (red) */
+        .card-urgent {
+            background: linear-gradient(135deg, #ffffff 0%, #fff9f9 80%, #fff5f5 100%);
+        }
+        
+        /* Card type styling - warning/caution (amber) */
+        .card-warning {
+            background: linear-gradient(135deg, #ffffff 0%, #fffcf5 80%, #fff9ee 100%);
+        }
+        
+        /* Card type styling - positive/success (green) */
+        .card-positive {
+            background: linear-gradient(135deg, #ffffff 0%, #f7fcf7 80%, #f2faf2 100%);
+        }
+        
+        /* Card type styling - informational (purple) */
+        .card-info {
+            background: linear-gradient(135deg, #ffffff 0%, #faf8ff 80%, #f5f2ff 100%);
+        }
+        
+        .module-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        
+        .module-name {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 3px;
+            opacity: 0.85;
+        }
+        
+        /* Module name colors by card type */
+        .card-neutral .module-name { color: #5f6368; }
+        .card-urgent .module-name { color: #d93025; }
+        .card-warning .module-name { color: #e37400; }
+        .card-positive .module-name { color: #188038; }
+        .card-info .module-name { color: #673ab7; }
+        
+        .module-title {
+            font-size: 14px;
+            font-weight: 400;
+            margin-top: 0;
+            margin-bottom: 10px;
+            letter-spacing: 0.01em;
+        }
+        
+        /* Module title colors by card type */
+        .card-neutral .module-title { color: #4285f4; }
+        .card-urgent .module-title { color: #d93025; }
+        .card-warning .module-title { color: #e37400; }
+        .card-positive .module-title { color: #188038; }
+        .card-info .module-title { color: #673ab7; }
+        
+        .module-insight {
+            font-size: 13px;
+            line-height: 1.4;
+            color: #202124;
+            margin-bottom: 0;
+        }
+        
+        /* Metric colors by card type */
+        .card-neutral .metric { color: #4285f4; font-weight: 500; }
+        .card-urgent .metric { color: #d93025; font-weight: 500; }
+        .card-warning .metric { color: #e37400; font-weight: 500; }
+        .card-positive .metric { color: #188038; font-weight: 500; }
+        .card-info .metric { color: #673ab7; font-weight: 500; }
+        
+        /* Left accent border on hover */
+        .module-card:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .card-neutral:before { background: linear-gradient(to bottom, rgba(66, 133, 244, 0.7), rgba(138, 180, 248, 0.3)); }
+        .card-urgent:before { background: linear-gradient(to bottom, rgba(217, 48, 37, 0.7), rgba(242, 139, 130, 0.3)); }
+        .card-warning:before { background: linear-gradient(to bottom, rgba(227, 116, 0, 0.7), rgba(251, 188, 4, 0.3)); }
+        .card-positive:before { background: linear-gradient(to bottom, rgba(24, 128, 56, 0.7), rgba(52, 168, 83, 0.3)); }
+        .card-info:before { background: linear-gradient(to bottom, rgba(103, 58, 183, 0.7), rgba(149, 117, 205, 0.3)); }
+        
+        .module-card:hover:before {
+            opacity: 1;
+        }
+        
+        /* Correlation indicator */
+        .correlation {
+            font-size: 12px;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(0,0,0,0.04);
+        }
+        
+        /* Correlation colors by card type */
+        .card-neutral .correlation { color: #5f6368; }
+        .card-urgent .correlation { color: #a52714; }
+        .card-warning .correlation { color: #b06000; }
+        .card-positive .correlation { color: #0d652d; }
+        .card-info .correlation { color: #4a148c; }
+        
+        .correlation-arrow {
+            display: inline-block;
+            margin: 0 4px;
+        }
+        
+        /* Arrow colors by card type */
+        .card-neutral .correlation-arrow { color: #4285f4; }
+        .card-urgent .correlation-arrow { color: #d93025; }
+        .card-warning .correlation-arrow { color: #e37400; }
+        .card-positive .correlation-arrow { color: #188038; }
+        .card-info .correlation-arrow { color: #673ab7; }
+        
+        /* Priority indicator */
+        .priority-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .priority-urgent { background-color: #d93025; }
+        .priority-warning { background-color: #e37400; }
+        .priority-normal { background-color: #4285f4; }
+        .priority-low { background-color: #188038; }
+        
+        /* Personalized greeting */
+        .personal-mention {
+            font-style: italic;
+            opacity: 0.9;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+    </style>
+    <!-- Sortable.js for drag and drop functionality -->    
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="drag-drop.js"></script>
+    <link rel="stylesheet" href="module-cards.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">Riskill</div>
+                <div class="header-actions">
+                    <!-- Search and user profile removed as requested -->
+                </div>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="header-zone">
+                <div class="header-stream">
+                    <div class="stream-item">
+                        <div class="stream-title">Revenue (MTD)</div>
+                        <div class="stream-value">$1.24M</div>
+                        <div class="stream-trend trend-up">+12.3% vs. prev. month</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Active Users</div>
+                        <div class="stream-value">24,892</div>
+                        <div class="stream-trend trend-up">+8.7% vs. prev. week</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Conversion Rate</div>
+                        <div class="stream-value">3.8%</div>
+                        <div class="stream-trend trend-up">+0.5% vs. prev. month</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Churn Rate</div>
+                        <div class="stream-value">1.2%</div>
+                        <div class="stream-trend trend-down">-0.3% vs. prev. month</div>
+                    </div>
+                    <div class="stream-item">
+                        <div class="stream-title">Support Tickets</div>
+                        <div class="stream-value">127</div>
+                        <div class="stream-trend trend-down">-18% vs. prev. week</div>
+                    </div>
+                </div>
+            </div>
+            <div class="left-zone">
+                <div class="left-card settings-card adam-card">
+                    <div class="card-header adam-header">Adam Draper</div>
+                    <div class="card-content compact-content">
+                        <div class="setting-item">
+                            <span class="setting-label">SaaS Connections</span>
+                            <span class="setting-value">8</span>
+                        </div>
+                        <div class="integration-section">
+                            <div class="integration-header clickable" onclick="triggerCopilot('integrations')">
+                                <span class="integration-title">Recommended</span>
+                                <span class="integration-icon-small">+</span>
+                            </div>
+                            <div class="integration-item clickable" onclick="triggerCopilot('clickup')">
+                                <div class="integration-icon">C</div>
+                                <div class="integration-name">ClickUp</div>
+                            </div>
+                            <div class="integration-item clickable" onclick="triggerCopilot('quickbooks')">
+                                <div class="integration-icon">Q</div>
+                                <div class="integration-name">QuickBooks</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="left-card control-card">
+                    <div class="card-header">Dashboard Controls</div>
+                    <div class="card-content">
+                        <div class="control-item">
+                            <span class="control-label">Time Period</span>
+                            <span class="control-value">Last 30 Days</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="control-label">Data Source</span>
+                            <span class="control-value">All Systems</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="control-label">Threshold</span>
+                            <span class="control-value">Medium</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="left-card filters-card">
+                    <div class="card-header">Filters</div>
+                    <div class="card-content">
+                        <div class="setting-item">
+                            <div class="setting-label">Risk Level</div>
+                            <div class="setting-value">High</div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">Department</div>
+                            <div class="setting-value">Finance</div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">Status</div>
+                            <div class="setting-value">Active</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="left-card preferences-card">
+                    <div class="card-header">Preferences</div>
+                    <div class="card-content">
+                        <div class="setting-item">
+                            <div class="setting-label">Theme</div>
+                            <div class="setting-value">Light</div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">Layout</div>
+                            <div class="setting-value">Compact</div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">Auto-refresh</div>
+                            <div class="setting-value">5 min</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="front-page-row" style="display: flex; gap: 16px; margin-bottom: 16px; width: 100%; height: auto;">
+                    <div class="front-page-zone" style="max-width: 65%; flex: 1;">
+                        <div class="strategic-narrative">
+                            <h2>Strategic Insight Summary</h2>
+                            <div class="narrative-date">July 16, 2025</div>
+                            <div class="narrative-content personal-greeting" data-preserve-content="true">
+                                <p>Joe, I wanted to check in before your executive team meeting at 2PM. I've synthesized the latest performance data, and there's a compelling story emerging that deserves your attention.</p>
+                                <p>Your strategic pivot is gaining traction. EU SaaS subscriptions increased 42% last week, validating the targeted marketing approach we discussed. More importantly, enterprise retention has improved 27% this quarter – the foundation is strengthening.</p>
+                                <p>The infrastructure upgrade is delivering as promised: 23% faster processing and 42% reduction in API response times. This positions us well for the enterprise security features that 3 of your top prospects specifically requested yesterday.</p>
+                                <p>Looking ahead, I've identified these priorities requiring your attention:</p>
+                                <ul style="margin-top: 8px; margin-bottom: 12px; padding-left: 20px;">
+                                    <li>Enterprise security feature decision needed by Thursday (blocking $2.8M pipeline)</li>
+                                    <li>Q3 budget reallocation proposal ready for your review</li>
+                                    <li>Meeting request from Globex Corp. CEO (potential strategic partnership)</li>
+                                </ul>
+                                <p>The window for market leadership is open, but our analysis suggests it will narrow in the next 90 days as competitors adjust their strategies. I recommend accelerating the enterprise feature roadmap to capitalize on our current momentum.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-zones-container">
+                        <div class="anomalies-zone">
+                            <h3>Anomalies</h3>
+                            <div class="anomaly-item">
+                                <p>Ad spend on SKU-A is <span class="metric-highlight">+37%</span> vs. 7-day avg.</p>
+                                <p class="source">Google Ads</p>
+                            </div>
+                            <div class="anomaly-item">
+                                <p>Support ticket volume from EU region <span class="positive-metric">up 25%</span>.</p>
+                                <p class="source">Zendesk</p>
+                            </div>
+                            <div class="anomaly-item">
+                                <p>New user activation rate <span class="metric-highlight">dropped by 15%</span> in last 24h.</p>
+                                <p class="source">Internal DB</p>
+                            </div>
+                        </div>
+                        <div class="opportunities-zone">
+                            <h3>Opportunities</h3>
+                            <div class="opportunity-item">
+                                <p><span class="positive-metric">+$18K ARR Potential</span></p>
+                                <p>Tier-2 users upgrading trend suggests a targeted nudge campaign could accelerate revenue.</p>
+                            </div>
+                            <div class="opportunity-item">
+                                <p><span class="positive-metric">+8% Conversion Rate</span></p>
+                                <p>A/B test on pricing page shows variant B is outperforming. Recommend rolling out to 100%.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="main-canvas-row">
+                    <div class="main-canvas">
+                        <div class="module-card-container">
+                            <div class="module-card card-urgent">
+                                <div class="priority-indicator priority-urgent"></div>
+                                <div class="module-name">Cashflow Predictor</div>
+                                <h3 class="module-title">Burn Rate Alert</h3>
+                                <p class="module-insight">Joe, I've analyzed your cash runway across 14 financial systems and found your burn rate has accelerated to <span class="metric">9.2% MoM</span> — that's <span class="metric">$24k</span> above forecast. I've traced this primarily to three unplanned engineering hires and AWS cost spikes from the new ML pipeline.</p>
+                                <div class="correlation">Transaction <span class="correlation-arrow">→</span> Payroll</div>
+                                <p class="personal-mention">This impacts your runway projection we discussed at Tuesday's board prep meeting.</p>
+                            </div>
+                            
+                            <div class="module-card card-warning">
+                                <div class="priority-indicator priority-warning"></div>
+                                <div class="module-name">Cashflow Predictor</div>
+                                <h3 class="module-title">Revenue Forecast Variance</h3>
+                                <p class="module-insight">I've synthesized data from your CRM, billing system, and sales pipeline and found Q3 revenue is trending <span class="metric">$412k below</span> your forecast. The variance stems primarily from delayed enterprise deals with Acme Corp and TechGiant that were expected to close in August.</p>
+                                <div class="correlation">Forecast <span class="correlation-arrow">→</span> Transaction</div>
+                                <p class="personal-mention">You'll want to revise the burn planning model before your CFO meeting tomorrow.</p>
+                            </div>
+                            
+                            <div class="module-card card-urgent">
+                                <div class="priority-indicator priority-urgent"></div>
+                                <div class="module-name">Churn Radar</div>
+                                <h3 class="module-title">Active Ticket Churn Risk</h3>
+                                <p class="module-insight">I've correlated your support ticket data with historical churn patterns and identified <span class="metric">22 customers</span> (representing 2.3% of your MRR) with <span class="metric">23 open P1 tickets</span>. My analysis of 3 years of support history shows these patterns typically result in 41% churn within 30 days if left unaddressed.</p>
+                                <div class="correlation">Subscription <span class="correlation-arrow">→</span> Ticket</div>
+                                <p class="personal-mention">I've drafted an executive escalation plan for your review in Slack.</p>
+                            </div>
+                            
+                            <div class="module-card card-warning">
+                                <div class="priority-indicator priority-warning"></div>
+                                <div class="module-name">Churn Radar</div>
+                                <h3 class="module-title">CSAT Detractor Alert</h3>
+                                <p class="module-insight">Joe, your CSAT surveys last week revealed a concerning pattern. Customers scoring ≤2 have a <span class="metric">37% predicted churn rate</span> based on my analysis of your NPS, usage, and renewal data. I've identified that most detractors are struggling with the new UI changes rolled out last sprint.</p>
+                                <div class="correlation">CSAT <span class="correlation-arrow">→</span> Churn</div>
+                                <p class="personal-mention">Should I schedule targeted outreach with these accounts before your vacation next week?</p>
+                            </div>
+                            
+                            <div class="module-card card-warning">
+                                <div class="priority-indicator priority-warning"></div>
+                                <div class="module-name">Churn Radar</div>
+                                <h3 class="module-title">Mid-Tier Segment Churn</h3>
+                                <p class="module-insight">After analyzing your customer segmentation data across CRM, product usage, and billing systems, I've discovered that mid-tier users in your 'High Touch' segment are <span class="metric">3× more likely</span> to churn than other segments. The key factor appears to be insufficient CSM touchpoints despite their classification.</p>
+                                <div class="correlation">Segment <span class="correlation-arrow">→</span> Churn</div>
+                                <p class="personal-mention">This contradicts the segmentation strategy we discussed at the quarterly planning session.</p>
+                            </div>
+                            
+                            <div class="module-card card-urgent">
+                                <div class="priority-indicator priority-urgent"></div>
+                                <div class="module-name">Cost Watchtower</div>
+                                <h3 class="module-title">Labor Efficiency Alert</h3>
+                                <p class="module-insight">Joe, I've noticed a significant cost anomaly yesterday. Support labor costs hit <span class="metric">42% of gross profit</span> (normally 29%). By correlating timesheet data with ticket volume and complexity, I've identified that the new enterprise client onboarding is consuming disproportionate resources without corresponding revenue allocation.</p>
+                                <div class="correlation">Timesheet <span class="correlation-arrow">→</span> Transaction</div>
+                                <p class="personal-mention">This will impact the efficiency metrics you're presenting to investors next week.</p>
+                            </div>
+                            
+                            <div class="module-card card-warning">
+                                <div class="priority-indicator priority-warning"></div>
+                                <div class="module-name">Efficiency Lens</div>
+                                <h3 class="module-title">SLA Breach Alert</h3>
+                                <p class="module-insight">I've detected an SLA breach pattern in your DC-2 distribution center. By analyzing order processing times, staffing levels, and throughput metrics, I can see that overtime hours are increasing while order volume remains flat. The root cause appears to be the new picking software that was deployed without adequate training.</p>
+                                <div class="correlation">Order <span class="correlation-arrow">→</span> Timesheet</div>
+                                <p class="personal-mention">This is affecting the operational excellence metrics you highlighted in last month's all-hands.</p>
+                            </div>
+                            
+                            <div class="module-card card-warning">
+                                <div class="priority-indicator priority-warning"></div>
+                                <div class="module-name">Escalation Radar</div>
+                                <h3 class="module-title">Post-Delivery Issues</h3>
+                                <p class="module-insight">Joe, by correlating your shipping data with customer support tickets across 7 different systems, I've identified that customer issues per 1k shipments have spiked to <span class="metric">14</span> (that's 2.3× your baseline) specifically on the Carrier XYZ midwest route. Weather data shows no obvious external factors.</p>
+                                <div class="correlation">Shipment <span class="correlation-arrow">→</span> Ticket</div>
+                                <p class="personal-mention">This may require revisiting the carrier agreement we finalized last quarter.</p>
+                            </div>
+                            
+                            <div class="module-card card-positive">
+                                <div class="priority-indicator priority-low"></div>
+                                <div class="module-name">Expansion Engine</div>
+                                <h3 class="module-title">Usage Threshold Alert</h3>
+                                <p class="module-insight">Great news, Joe! I've identified <span class="metric">23 accounts</span> that have hit the usage threshold for Tier-2 upgrades. By analyzing their usage patterns, growth trajectory, and comparing with similar customers who've upgraded, these accounts show strong expansion potential. I've drafted personalized nudge campaigns for each.</p>
+                                <div class="correlation">Subscription <span class="correlation-arrow">→</span> Event <span class="correlation-arrow">→</span> Account</div>
+                                <p class="personal-mention">This could help offset the revenue gap we discussed in your forecast review.</p>
+                            </div>
+                            
+                            <div class="module-card card-positive">
+                                <div class="priority-indicator priority-normal"></div>
+                                <div class="module-name">Growth Pulse</div>
+                                <h3 class="module-title">Feature Usage Expansion</h3>
+                                <p class="module-insight">Joe, I've analyzed feature adoption patterns across your entire customer base and discovered that accounts that engaged with Feature X at least 5 times upgraded at a rate <span class="metric">18% higher</span> than others. I've identified 47 accounts showing similar early engagement patterns that haven't yet upgraded.</p>
+                                <div class="correlation">Event <span class="correlation-arrow">→</span> Subscription</div>
+                                <p class="personal-mention">This validates the product-led growth strategy you championed last quarter.</p>
+                            </div>
+                            
+                            <div class="module-card card-urgent">
+                                <div class="priority-indicator priority-urgent"></div>
+                                <div class="module-name">Marketing ROI Lens</div>
+                                <h3 class="module-title">ROAS Alert</h3>
+                                <p class="module-insight">Joe, your Return on Ad Spend for Google Ads campaigns has fallen <span class="metric">27% week-over-week</span>. I've analyzed click-through rates, conversion funnels, and competitive ad positioning across 1,200+ keywords and identified Campaign ID 123 as the primary drain. Pausing it would prevent approximately $1.7k in inefficient spend.</p>
+                                <div class="correlation">Transaction <span class="correlation-arrow">→</span> AdSpend</div>
+                                <p class="personal-mention">I know CAC efficiency is a key metric for your board meeting next week.</p>
+                            </div>
+                            
+                            <div class="module-card card-info">
+                                <div class="priority-indicator priority-normal"></div>
+                                <div class="module-name">Revenue Guard</div>
+                                <h3 class="module-title">API Error Alert</h3>
+                                <p class="module-insight">Joe, the revenue dip you noticed in this morning's dashboard may be misleading. I've detected that your Stripe API sync paused 3 hours ago due to an authentication error (401). This means approximately 18% of transaction data isn't being reflected in your analytics. Re-authenticating should restore accurate numbers.</p>
+                                <div class="correlation">APIError <span class="correlation-arrow">→</span> Any Biz KPI</div>
+                                <p class="personal-mention">I can help troubleshoot this before your executive review at 2pm.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Include Anime.js and interaction scripts -->
+    <script src="anime.min.js"></script>
+    <script src="stack-interaction.js"></script>
+    <script src="responsive-cards.js"></script>
+    <link rel="stylesheet" href="strategic-narrative-enhancements.css">
+    <script src="left-card-animation.js"></script>
+    <script>
+        function triggerCopilot(topic) {
+            const copilotPanel = document.querySelector('.copilot-panel');
+            if (copilotPanel) {
+                // Show the copilot panel
+                copilotPanel.classList.add('active');
+                
+                // Create a message based on the topic
+                let message = '';
+                if (topic === 'integrations') {
+                    message = 'I noticed you receive regular emails from ClickUp and QuickBooks. Would you like me to set up integrations with these services?';
+                } else if (topic === 'clickup') {
+                    message = 'I can connect your ClickUp tasks and projects to provide real-time updates and analytics. Would you like me to proceed with this integration?';
+                } else if (topic === 'quickbooks') {
+                    message = 'Integrating with QuickBooks will allow me to provide financial insights and correlate them with your other business metrics. Would you like to connect this service?';
+                }
+                
+                // Add the message to the copilot chat
+                const chatContent = document.querySelector('.copilot-chat-content');
+                if (chatContent) {
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'copilot-message';
+                    messageElement.innerHTML = `<div class="copilot-avatar">A</div><div class="copilot-text">${message}</div>`;
+                    chatContent.appendChild(messageElement);
+                    chatContent.scrollTop = chatContent.scrollHeight;
+                }
+            }
+        }
+    </script>
+    <script src="main-canvas-animation.js"></script>
+    <script src="revenue-metrics.js"></script>
+    <script src="operational-efficiency.js"></script>
+    <script src="churn-metrics.js"></script>
+    <script src="marketing-roi.js"></script>
+    <script src="growth-opportunities.js"></script>
+    <script src="copilot-integration.js"></script>
+    <script src="perplexity-card-interaction.js"></script>
+    <script src="card-animations.js"></script>
+    <script src="entity-linking.js"></script>
+    <script src="entity-drill-animations.js"></script>
+    <script src="test-animations.js"></script>
+    <script src="strategic-narrative.js"></script>
+    <script>
+        // Ensure the strategic narrative is updated when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Strategic narrative update disabled to preserve custom content
+            console.log('Strategic narrative forced update disabled');
+        });
+    </script>
+    <script src="copilot-chat.js"></script>
+    
+    <!-- Copilot Chat Panel -->
+    <div class="copilot-chat-panel">
+        <div class="copilot-header">
+            <button class="close-copilot" aria-label="Close">×</button>
+        </div>
+        <div class="copilot-messages">
+            <!-- Card will be inserted here when clicked -->
+            <div class="message copilot-message">
+                <p>I can help you analyze this insight. What would you like to know?</p>
+            </div>
+        </div>
+        <div class="copilot-input-area">
+            <input type="text" class="copilot-input" placeholder="" />
+        </div>
+    </div>
+</body>
+</html>
